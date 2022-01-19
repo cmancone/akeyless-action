@@ -31,11 +31,12 @@ To configure AKeyless and grant your repositories the necessary permissions to e
 After following these steps, you'll be ready to use JWT Auth from your Github runners!
 
 (1) **Note:** The unique identifier is mainly used for auditing/billing purposes, so there isn't one correct answer here.  `repository` is a sensible default but if you are uncertain, talk to AKeyless for more details.
-(2) **Note:** Sub claim checks allow AKeyless to confirm the details of the workflow trying to authenticate with AKeyless, based on the information that Github provides in the JWT.  Using the example JWT from [the documentation](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#understanding-the-oidc-token), a subclaim check of `repository_owner=octo-org` to allow any workflow in the entire organization to login.  A subclaim check of `repository=octo-org/octo-repo` would limit access to workflows attached to the `octo-repo` repo which are owned by `octo-group`, and a sub claim check of `ref=refs/heads/main` would limit access to workflows triggered from the main branch.  You can combine these in the sublcaims box with a newline, allowing for checks like:
+
+(2) **Note:** Sub claim checks allow AKeyless to confirm the details of the workflow trying to authenticate with AKeyless, based on the information that Github provides in the JWT.  Using the example JWT from [the documentation](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#understanding-the-oidc-token), a subclaim check of:
 
 ```
 repository=octo-org/octo-repo
 ref=refs/heads/main
 ```
 
-which would limit access to only workflows that were triggered from the main branch in the `octo-org/octo-repo` repository.
+which would limit access to workflows that were triggered from the main branch in the `octo-org/octo-repo` repository.
