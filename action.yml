@@ -17,19 +17,19 @@ inputs:
     default: ''
     required: false
   static-secrets:
-    description: 'List of static secrets to fetch from AKeyless.  Should be a dictionary with the secret path as the key and the destination output/ENV as the value'
+    description: 'Static secrets to fetch from AKeyless.  Should be a dictionary with the secret path as the key and the destination output/ENV as the value'
     required: false
   dynamic-secrets:
-    description: 'List of dynamic secrets to fetch from AKeyless.  Should be a dictionary with the secret path as the key and the destination output/ENV as the value'
+    description: 'Dynamic secrets to fetch from AKeyless.  Should be a dictionary with the secret path as the key and the destination output/ENV as the value'
     required: false
   export-secrets-to-outputs:
     description: 'Whether or not to export the extracted secrets to job outputs'
     required: false
-    default: True
+    default: true
   export-secrts-to-environment:
     description: 'Whether or not to export the extracted secrets to the environment'
     required: false
-    default: True
+    default: true
 runs:
   using: 'node16'
   main: 'index.js'

@@ -1,0 +1,27 @@
+{
+  "name": "akeyless-action",
+  "version": "1.0.0",
+  "description": "This action will login to AKeyless using JWT or IAM auth and then fetch secrets and/or provision AWS access via a dynamic producer.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmancone/akeyless-action.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cmancone/akeyless-action/issues"
+  },
+  "homepage": "https://github.com/cmancone/akeyless-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0",
+    "akeyless": "^2.15.24",
+    "akeyless-cloud-id": "^1.0.0",
+    "assert": "^2.0.0"
+  }
+}

@@ -2,6 +2,12 @@
 
 This action will login to AKeyless using JWT or IAM auth and then fetch secrets and/or provision AWS access via a dynamic producer.
 
+1. [Authentication Methods](#authentication-methods)
+2. [Setting up JWT Auth](#setting-up-jwt-auth)
+3. [Inputs](#inputs)
+4. [Outputs](#outputs)
+5. [Example Usage](#example-usage)
+
 ## Authentication Methods
 
 This action only supports authenticating to AKeyless via JWT auth (using the Github OIDC token) or via IAM Auth (using a role attached to a cloud-hosted Github runner).  I don't plan to support additional authentication methods because there isn't much point.  Any other authentication method (with the exception of [universal identity](https://docs.akeyless.io/docs/universal-identity)) would requiring storing access tokens in Github.  Since JWT auth already has 100% coverage of all Github runners **and** allows easy access to AKeyless without storing permanent access credentials, there's no good reason to copy permanent access credentials into Github.
@@ -30,13 +36,19 @@ To configure AKeyless and grant your repositories the necessary permissions to e
 
 After following these steps, you'll be ready to use JWT Auth from your Github runners!
 
-(1) **Note:** The unique identifier is mainly used for auditing/billing purposes, so there isn't one correct answer here.  `repository` is a sensible default but if you are uncertain, talk to AKeyless for more details.
+**(1) Note:** The unique identifier is mainly used for auditing/billing purposes, so there isn't one correct answer here.  `repository` is a sensible default but if you are uncertain, talk to AKeyless for more details.
 
-(2) **Note:** Sub claim checks allow AKeyless to confirm the details of the workflow trying to authenticate with AKeyless, based on the information that Github provides in the JWT.  Using the example JWT from [the documentation](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#understanding-the-oidc-token), a subclaim check of:
+**(2) Note:** Sub claim checks allow AKeyless to grant access to specific workflows, based on the claims that Github provides in the JWT.  Using the example JWT from [the documentation](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#understanding-the-oidc-token), you could set a subclaim check in AKeyless of:
 
 ```
 repository=octo-org/octo-repo
 ref=refs/heads/main
 ```
 
-which would limit access to workflows that were triggered from the main branch in the `octo-org/octo-repo` repository.
+to limit access to workflows that were triggered from the main branch in the `octo-org/octo-repo` repository.
+
+## Inputs
+
+## Outputs
+
+## Example usage
