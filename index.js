@@ -17,6 +17,8 @@ try {
         exportSecretsToEnvironment,
     } = input.fetchAndValidateInput()
 
+    const akeylessToken = auth.akeylessLogin(accessId, accessType, apiUrl)
+
 } catch (error) {
     core.setFailed(error.message);
 }
