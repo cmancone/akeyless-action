@@ -13,7 +13,7 @@ test('jwt login', async () => {
     core.getIDToken = jest.fn(() => Promise.resolve('github-jwt'));
     api = jest.fn(() => {});
     api.auth = jest.fn(() => Promise.resolve({'token': 'akeyless-token'}));
-    akeylessApi.api = jest.fn(() => api)
+    akeylessApi.api = jest.fn(() => api);
     akeyless.Auth.constructFromObject = jest.fn(() => 'auth_body');
     await expect(auth.akeylessLogin('p-12345', 'jwt', 'https://api.akeyless.io')).resolves.toEqual('akeyless-token');
     expect(api.auth).toHaveBeenCalledWith('auth_body');

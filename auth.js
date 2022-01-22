@@ -10,7 +10,7 @@ async function jwtLogin(apiUrl, accessId) {
         'access-type': 'jwt',
         'access-id': accessId,
         'jwt': githubToken,
-    }))
+    }));
 }
 async function awsIamLogin(apiUrl, accessId) {
     api = akeylessApi.api(apiUrl);
@@ -19,14 +19,14 @@ async function awsIamLogin(apiUrl, accessId) {
         'access-type': 'aws_iam',
         'access-id': accessId,
         'cloud-id': cloudId,
-    }))
+    }));
 }
 
 const login = {
     'jwt': jwtLogin,
     'aws_iam': awsIamLogin,
 }
-const allowedAccessTypes = Object.keys(login)
+const allowedAccessTypes = Object.keys(login);
 
 async function akeylessLogin(accessId, accessType, apiUrl) {
     const result = await login[accessType](apiUrl, accessId)
@@ -35,4 +35,3 @@ async function akeylessLogin(accessId, accessType, apiUrl) {
 
 exports.akeylessLogin = akeylessLogin;
 exports.allowedAccessTypes = allowedAccessTypes;
-exports.jwtLogin = jwtLogin;

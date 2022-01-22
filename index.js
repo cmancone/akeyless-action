@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const auth = require('./auth')
-const aws_access = require('./aws_access')
+const awsAccess = require('./aws_access')
 const secrets = require('./secrets')
 const input = require('./input')
 
@@ -15,9 +15,12 @@ try {
         dynamicSecrets,
         exportSecretsToOutputs,
         exportSecretsToEnvironment,
-    } = input.fetchAndValidateInput()
+    } = input.fetchAndValidateInput();
 
-    const akeylessToken = auth.akeylessLogin(accessId, accessType, apiUrl)
+    const akeylessToken = auth.akeylessLogin(accessId, accessType, apiUrl);
+    if (producerForAwsAccess) {
+        awsAccess.awsLogin(akeylessToken, producerForAwsAccess, apiUrl);
+    }
 
 } catch (error) {
     core.setFailed(error.message);
