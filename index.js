@@ -42,5 +42,12 @@ async function run() {
 exports.run = run
 
 if (require.main === module) {
-    run();
+    try {
+        console.log('hey')
+        core.debug('hey')
+        run();
+    } catch (error) {
+        console.log('sup')
+        core.debug('sup')
+    }
 }
