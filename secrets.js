@@ -9,7 +9,8 @@ async function getDynamicSecret(api, name, akeylessToken) {
             'name': name,
         }));
     } catch (error) {
-        core.setFailed(`Failed to fetch dynamic secret: ${error.message}`);
+        core.setFailed(`Failed to fetch dynamic secret: ${error}`);
+        throw error;
     }
     return dynamicSecret;
 }
@@ -21,7 +22,8 @@ async function getStaticSecret(api, name, akeylessToken) {
             'names': [name],
         }));
     } catch (error) {
-        core.setFailed(`Failed to fetch static secret: ${error.message}`);
+        core.setFailed(`Failed to fetch static secret: ${error}`);
+        throw error;
     }
     return staticSecret[name];
 }
