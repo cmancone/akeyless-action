@@ -19,18 +19,23 @@ async function run() {
             exportSecretsToEnvironment,
         } = input.fetchAndValidateInput();
         core.debug(`access id: ${accessId}`);
-
-        core.debug(`Fetch akeyless token`);
+        core.debug(`Fetch akeyless token with access type ${accessType}`);
         const akeylessToken = auth.akeylessLogin(accessId, accessType, apiUrl);
-        core.debug(`Producer for AWS Access: ${producerForAwsAccess}`);
+        core.debug(`AKeyless token length: ${akeylessToken.length}`);
         if (producerForAwsAccess) {
-            core.debug(`Fetch AWS credentials`);
+            core.debug(`Fetch AWS credentials with producer ${producerForAwsAccess}`);
             awsAccess.awsLogin(akeylessToken, producerForAwsAccess, apiUrl);
+        } else {
+            core.debug(`No AWS producer specified: skipping AWS access step`);
         }
         if (staticSecrets) {
+            core.debug(`Fetch static secrets`);
             secrets.exportStaticSecrets(akeylessToken, staticSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment);
+        } else {
+            core.debug(`No static secrets specified: skipping static secret export step`);
         }
         if (dynamicSecrets) {
+            core.debug(`Fetch static secrets`);
             secrets.exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment);
         }
 
@@ -43,11 +48,9 @@ exports.run = run
 
 if (require.main === module) {
     try {
-        console.log('hey')
-        core.debug('hey')
+        core.debug('Starting main run');
         run();
     } catch (error) {
-        console.log('sup')
-        core.debug('sup')
+        core.setFailed(error.message);
     }
 }

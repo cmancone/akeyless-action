@@ -13,8 +13,7 @@ async function jwtLogin(apiUrl, accessId) {
             'jwt': githubToken,
         }));
     } catch (error) {
-        console.log(error.message);
-        core.setFailed(`Failed to fetch Github JWT: ${e.message}`);
+        core.setFailed(`Failed to fetch Github JWT: ${error.message}`);
     }
 }
 async function awsIamLogin(apiUrl, accessId) {
@@ -22,7 +21,7 @@ async function awsIamLogin(apiUrl, accessId) {
     try {
         const cloudId = await akeylessCloudId();
     } catch (error) {
-        core.setFailed(`Failed to fetch cloud id: ${e.message}`);
+        core.setFailed(`Failed to fetch cloud id: ${error.message}`);
     }
     return api.auth(akeyless.Auth.constructFromObject({
         'access-type': 'aws_iam',

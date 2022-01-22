@@ -3,18 +3,26 @@ const akeylessApi = require('./akeyless_api');
 const akeyless = require('akeyless');
 
 async function getDynamicSecret(api, name, akeylessToken) {
-    const dynamicSecret = await api.getDynamicSecretValue(akeyless.GetDynamicSecretValue.constructFromObject({
-        'token': akeylessToken,
-        'name': name,
-    }));
+    try {
+        const dynamicSecret = await api.getDynamicSecretValue(akeyless.GetDynamicSecretValue.constructFromObject({
+            'token': akeylessToken,
+            'name': name,
+        }));
+    } catch (error) {
+        core.setFailed(`Failed to fetch dynamic secret: ${error.message}`);
+    }
     return dynamicSecret;
 }
 
 async function getStaticSecret(api, name, akeylessToken) {
-    const staticSecret = await api.getSecretValue(akeyless.GetSecretValue.constructFromObject({
-        'token': akeylessToken,
-        'names': [name],
-    }));
+    try {
+        const staticSecret = await api.getSecretValue(akeyless.GetSecretValue.constructFromObject({
+            'token': akeylessToken,
+            'names': [name],
+        }));
+    } catch (error) {
+        core.setFailed(`Failed to fetch static secret: ${e.message}`);
+    }
     return staticSecret[name];
 }
 
