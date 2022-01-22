@@ -9,6 +9,8 @@ async function getDynamicSecret(api, name, akeylessToken) {
             'name': name,
         }));
     } catch (error) {
+        console.log(error);
+        console.log(error.name);
         core.setFailed(`Failed to fetch dynamic secret: ${error}`);
         throw error;
     }
