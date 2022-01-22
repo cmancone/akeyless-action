@@ -48,8 +48,21 @@ const fetchAndValidateInput = () => {
     }
     // check for dict types
     for (const [paramKey, inputId] of Object.entries(dictInputs)) {
-        if (params[paramKey].constructor != Object) {
-            throw new Error(`Input '${inputId}' should be a dictionary with the secret path as a key and the output name as the value`);
+        if (typeof params[paramKey] !== 'string') {
+            throw new Error(`Input '${inputId}' should be a serialized JSON dictionary with the secret path as a key and the output name as the value`);
+        }
+        try {
+            parsed = JSON.parse(params[paramKey]);
+            if (parsed.constructor != Object) {
+                throw new Error(`Input '${inputId}' did not contain a valid JSON dictionary`)
+            }
+            params[paramKey] = parsed;
+        } catch (e) {
+            if (e instanceof SyntaxError) {
+                throw new Error(`Input '${inputId}' did not contain valid JSON`);
+            } else {
+                throw e;
+            }
         }
     }
     // check access types

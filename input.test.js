@@ -9,8 +9,8 @@ test('Input is all good', () => {
     core.getInput.mockReturnValueOnce('JWT')
     core.getInput.mockReturnValueOnce('https://api.akeyless.io')
     core.getInput.mockReturnValueOnce('/path/to/aws/producer')
-    core.getInput.mockReturnValueOnce({'/some/static/secret': 'secret_key'})
-    core.getInput.mockReturnValueOnce({'/some/dynamic/secret': 'other_key'})
+    core.getInput.mockReturnValueOnce('{"/some/static/secret":"secret_key"}')
+    core.getInput.mockReturnValueOnce('{"/some/dynamic/secret":"other_key"}')
     core.getInput.mockReturnValueOnce(true)
     core.getInput.mockReturnValueOnce(true)
     params = input.fetchAndValidateInput()
@@ -37,22 +37,22 @@ test('Input is all good', () => {
 });
 
 test('check string', () => {
-    core.getInput = jest.fn()
-    core.getInput.mockReturnValueOnce('p-asdf')
-    core.getInput.mockReturnValueOnce(343)
-    core.getInput.mockReturnValue('sup')
-    expect(() => {input.fetchAndValidateInput()}).toThrow("Input 'access-type' should be a string")
+    core.getInput = jest.fn();
+    core.getInput.mockReturnValueOnce('p-asdf');
+    core.getInput.mockReturnValueOnce(343);
+    core.getInput.mockReturnValue('sup');
+    expect(() => {input.fetchAndValidateInput()}).toThrow("Input 'access-type' should be a string");
 })
 
 test('invalid access type', () => {
-    core.getInput = jest.fn()
-    core.getInput.mockReturnValueOnce('p-asdf')
-    core.getInput.mockReturnValueOnce('asdf')
-    core.getInput.mockReturnValueOnce('https://api.akeyless.io')
-    core.getInput.mockReturnValueOnce('/path/to/aws/producer')
-    core.getInput.mockReturnValueOnce({'/some/static/secret': 'secret_key'})
-    core.getInput.mockReturnValueOnce({'/some/dynamic/secret': 'other_key'})
-    core.getInput.mockReturnValueOnce(true)
-    core.getInput.mockReturnValueOnce(true)
-    expect(() => {input.fetchAndValidateInput()}).toThrow("access-type must be one of: ['jwt', 'aws_iam']")
+    core.getInput = jest.fn();
+    core.getInput.mockReturnValueOnce('p-asdf');
+    core.getInput.mockReturnValueOnce('asdf');
+    core.getInput.mockReturnValueOnce('https://api.akeyless.io');
+    core.getInput.mockReturnValueOnce('/path/to/aws/producer');
+    core.getInput.mockReturnValueOnce('{"/some/static/secret":"secret_key"}');
+    core.getInput.mockReturnValueOnce('{"/some/dynamic/secret":"other_key"}');
+    core.getInput.mockReturnValueOnce(true);
+    core.getInput.mockReturnValueOnce(true);
+    expect(() => {input.fetchAndValidateInput()}).toThrow("access-type must be one of: ['jwt', 'aws_iam']");
 })
