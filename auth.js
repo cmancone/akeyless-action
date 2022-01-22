@@ -6,16 +6,26 @@ const akeylessCloudId = require('akeyless-cloud-id')
 async function jwtLogin(apiUrl, accessId) {
     api = akeylessApi.api(apiUrl);
     core.debug(apiUrl);
+    let githubToken = undefined;
+    let akeylessResponse = undefined;
     try {
-        const githubToken = await core.getIDToken();
-        return await api.auth(akeyless.Auth.constructFromObject({
+        core.debug('Fetching JWT from Github');
+        githubToken = await core.getIDToken();
+    } catch (error) {
+        core.setFailed(`Failed to fetch Github JWT: ${error.message}`);
+    }
+    try {
+        core.debug('Fetching token from AKeyless');
+        akeylessResponse = await api.auth(akeyless.Auth.constructFromObject({
             'access-type': 'jwt',
             'access-id': accessId,
             'jwt': githubToken,
         }));
     } catch (error) {
-        core.setFailed(`Failed to fetch Github JWT: ${error.message}`);
+        core.setFailed(`Failed to login to AKeyless: ${error.message}`);
     }
+    core.debug(Object.keys(akeylessResponse));
+    return akeylessResponse['token'];
 }
 async function awsIamLogin(apiUrl, accessId) {
     api = akeylessApi.api(apiUrl);
