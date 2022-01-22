@@ -5,16 +5,25 @@ const akeylessCloudId = require('akeyless-cloud-id')
 
 async function jwtLogin(apiUrl, accessId) {
     api = akeylessApi.api(apiUrl);
-    const githubToken = await core.getIDToken();
-    return api.auth(akeyless.Auth.constructFromObject({
-        'access-type': 'jwt',
-        'access-id': accessId,
-        'jwt': githubToken,
-    }));
+    try {
+        const githubToken = await core.getIDToken();
+        return api.auth(akeyless.Auth.constructFromObject({
+            'access-type': 'jwt',
+            'access-id': accessId,
+            'jwt': githubToken,
+        }));
+    } catch (error) {
+        console.log(error.message);
+        core.setFailed(`Failed to fetch Github JWT: ${e.message}`);
+    }
 }
 async function awsIamLogin(apiUrl, accessId) {
     api = akeylessApi.api(apiUrl);
-    const cloudId = await akeylessCloudId();
+    try {
+        const cloudId = await akeylessCloudId();
+    } catch (error) {
+        core.setFailed(`Failed to fetch cloud id: ${e.message}`);
+    }
     return api.auth(akeyless.Auth.constructFromObject({
         'access-type': 'aws_iam',
         'access-id': accessId,
@@ -29,8 +38,12 @@ const login = {
 const allowedAccessTypes = Object.keys(login);
 
 async function akeylessLogin(accessId, accessType, apiUrl) {
-    const result = await login[accessType](apiUrl, accessId)
-    return result['token'];
+    try {
+        const result = await login[accessType](apiUrl, accessId)
+        return result['token'];
+    } catch (error) {
+        core.setFailed(`AKeyless login failed: ${error.message}`);
+    }
 };
 
 exports.akeylessLogin = akeylessLogin;
