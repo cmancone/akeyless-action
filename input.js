@@ -51,6 +51,9 @@ const fetchAndValidateInput = () => {
         if (typeof params[paramKey] !== 'string') {
             throw new Error(`Input '${inputId}' should be a serialized JSON dictionary with the secret path as a key and the output name as the value`);
         }
+        if (!params[paramKey]) {
+            continue;
+        }
         try {
             parsed = JSON.parse(params[paramKey]);
             if (parsed.constructor != Object) {
