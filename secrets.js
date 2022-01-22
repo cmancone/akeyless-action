@@ -21,7 +21,7 @@ async function getStaticSecret(api, name, akeylessToken) {
             'names': [name],
         }));
     } catch (error) {
-        core.setFailed(`Failed to fetch static secret: ${e.message}`);
+        core.setFailed(`Failed to fetch static secret: ${error.message}`);
     }
     return staticSecret[name];
 }
