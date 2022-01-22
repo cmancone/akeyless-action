@@ -26,7 +26,7 @@ inputs:
     description: 'Whether or not to export the extracted secrets to job outputs'
     required: false
     default: true
-  export-secrts-to-environment:
+  export-secrets-to-environment:
     description: 'Whether or not to export the extracted secrets to the environment'
     required: false
     default: true
