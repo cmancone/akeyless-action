@@ -7,6 +7,7 @@ const input = require('./input')
 
 async function run() {
     try {
+        core.debug('Fetching input');
         const {
             accessId,
             accessType,
@@ -17,9 +18,13 @@ async function run() {
             exportSecretsToOutputs,
             exportSecretsToEnvironment,
         } = input.fetchAndValidateInput();
+        core.debug(`access id: ${accessId}`);
 
+        core.debug(`Fetch akeyless token`);
         const akeylessToken = auth.akeylessLogin(accessId, accessType, apiUrl);
+        core.debug(`Producer for AWS Access: ${producerForAwsAccess}`);
         if (producerForAwsAccess) {
+            core.debug(`Fetch AWS credentials`);
             awsAccess.awsLogin(akeylessToken, producerForAwsAccess, apiUrl);
         }
         if (staticSecrets) {
