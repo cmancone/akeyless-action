@@ -12,6 +12,7 @@ async function jwtLogin(apiUrl, accessId) {
         core.debug('Fetching JWT from Github');
         githubToken = await core.getIDToken();
     } catch (error) {
+        core.debug('Failed to fetch JWT');
         core.setFailed(`Failed to fetch Github JWT: ${error.message}`);
     }
     try {
@@ -22,6 +23,7 @@ async function jwtLogin(apiUrl, accessId) {
             'jwt': githubToken,
         }));
     } catch (error) {
+        core.debug('Failed to login to AKeyless');
         core.setFailed(`Failed to login to AKeyless: ${error.message}`);
     }
     core.debug(Object.keys(akeylessResponse));
