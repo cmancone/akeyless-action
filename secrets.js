@@ -8,13 +8,11 @@ async function getDynamicSecret(api, name, akeylessToken) {
             'token': akeylessToken,
             'name': name,
         }));
+        return dynamicSecret;
     } catch (error) {
-        console.log(error);
-        console.log(error.name);
         core.setFailed(`Failed to fetch dynamic secret: ${error}`);
         throw error;
     }
-    return dynamicSecret;
 }
 
 async function getStaticSecret(api, name, akeylessToken) {
@@ -23,11 +21,11 @@ async function getStaticSecret(api, name, akeylessToken) {
             'token': akeylessToken,
             'names': [name],
         }));
+        return staticSecret[name];
     } catch (error) {
         core.setFailed(`Failed to fetch static secret: ${error}`);
         throw error;
     }
-    return staticSecret[name];
 }
 
 async function exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment) {

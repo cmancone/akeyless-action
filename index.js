@@ -35,8 +35,10 @@ async function run() {
             core.debug(`No static secrets specified: skipping static secret export step`);
         }
         if (dynamicSecrets) {
-            core.debug(`Fetch static secrets`);
+            core.debug(`Fetch dynamic secrets`);
             secrets.exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment);
+        } else {
+            core.debug(`No dynamic secrets specified: skipping dynamic secret export step`);
         }
 
     } catch (error) {
