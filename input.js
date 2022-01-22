@@ -20,14 +20,14 @@ const dictInputs = {
 
 const fetchAndValidateInput = () => {
     let params = {
-        accessId: core.getInput('access-id'),
+        accessId: core.getInput('access-id', { required: true }),
         accessType: core.getInput('access-type'),
         apiUrl: core.getInput('api-url'),
         producerForAwsAccess: core.getInput('producer-for-aws-access'),
         staticSecrets: core.getInput('static-secrets'),
         dynamicSecrets: core.getInput('dynamic-secrets'),
-        exportSecretsToOutputs: core.getInput('export-secrets-to-outputs'),
-        exportSecretsToEnvironment: core.getInput('export-secrets-to-environment'),
+        exportSecretsToOutputs: core.getBooleanInput('export-secrets-to-outputs'),
+        exportSecretsToEnvironment: core.getBooleanInput('export-secrets-to-environment'),
     };
     // our only required parameter
     if (!params['accessId']) {

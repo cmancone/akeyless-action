@@ -11,8 +11,9 @@ test('Input is all good', () => {
     core.getInput.mockReturnValueOnce('/path/to/aws/producer')
     core.getInput.mockReturnValueOnce('{"/some/static/secret":"secret_key"}')
     core.getInput.mockReturnValueOnce('{"/some/dynamic/secret":"other_key"}')
-    core.getInput.mockReturnValueOnce(true)
-    core.getInput.mockReturnValueOnce(true)
+    core.getBooleanInput = jest.fn()
+    core.getBooleanInput.mockReturnValueOnce(true)
+    core.getBooleanInput.mockReturnValueOnce(true)
     params = input.fetchAndValidateInput()
     expect(params).toEqual({
         'accessId': 'p-asdf',
@@ -25,12 +26,14 @@ test('Input is all good', () => {
         'exportSecretsToEnvironment': true,
     })
     expect(core.getInput.mock.calls).toEqual([
-        ['access-id'],
+        ['access-id', {"required": true}],
         ['access-type'],
         ['api-url'],
         ['producer-for-aws-access'],
         ['static-secrets'],
         ['dynamic-secrets'],
+    ]);
+    expect(core.getBooleanInput.mock.calls).toEqual([
         ['export-secrets-to-outputs'],
         ['export-secrets-to-environment'],
     ]);
@@ -52,7 +55,8 @@ test('invalid access type', () => {
     core.getInput.mockReturnValueOnce('/path/to/aws/producer');
     core.getInput.mockReturnValueOnce('{"/some/static/secret":"secret_key"}');
     core.getInput.mockReturnValueOnce('{"/some/dynamic/secret":"other_key"}');
-    core.getInput.mockReturnValueOnce(true);
-    core.getInput.mockReturnValueOnce(true);
+    core.getBooleanInput = jest.fn();
+    core.getBooleanInput.mockReturnValueOnce(true);
+    core.getBooleanInput.mockReturnValueOnce(true);
     expect(() => {input.fetchAndValidateInput()}).toThrow("access-type must be one of: ['jwt', 'aws_iam']");
 })
