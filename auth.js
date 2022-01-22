@@ -5,6 +5,7 @@ const akeylessCloudId = require('akeyless-cloud-id')
 
 async function jwtLogin(apiUrl, accessId) {
     api = akeylessApi.api(apiUrl);
+    core.debug(apiUrl);
     try {
         const githubToken = await core.getIDToken();
         return await api.auth(akeyless.Auth.constructFromObject({
@@ -38,8 +39,9 @@ const allowedAccessTypes = Object.keys(login);
 
 async function akeylessLogin(accessId, accessType, apiUrl) {
     try {
+        core.debug('fetch token');
         const result = await login[accessType](apiUrl, accessId)
-        console.log(Object.keys(result))
+        core.debug(Object.keys(result))
         return result['token'];
     } catch (error) {
         core.setFailed(`AKeyless login failed: ${error.message}`);
