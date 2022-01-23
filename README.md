@@ -10,7 +10,7 @@ This action will login to AKeyless using JWT or IAM auth and then fetch secrets 
 
 ## Authentication Methods
 
-This action only supports authenticating to AKeyless via JWT auth (using the Github OIDC token) or via IAM Auth (using a role attached to a cloud-hosted Github runner).  I don't plan to support additional authentication methods because there isn't much point.  Any other authentication method (with the exception of [universal identity](https://docs.akeyless.io/docs/universal-identity)) would requiring storing access tokens in Github.  Since JWT auth already has 100% coverage of all Github runners **and** allows easy access to AKeyless without storing permanent access credentials, there's no good reason to copy permanent access credentials into Github.
+This action only supports authenticating to AKeyless via JWT auth (using the Github OIDC token) or via IAM Auth (using a role attached to a cloud-hosted Github runner).  I don't plan to support additional authentication methods because there isn't much point (with the possible exception of Universal Identity).  After all, any runner can login to AKeyless using OIDC without storing permanent access credentials.  IAM auth is also supported in case you are using a runner hosted in your cloud account and so are already using IAM auth anyway - this will also give your runner access to AKeyless without storing permanent access credentials.
 
 ## Setting up JWT Auth
 
@@ -49,6 +49,35 @@ to limit access to workflows that were triggered from the main branch in the `oc
 
 ## Inputs
 
+| Name                          | Required | Type    | Value                                                                                                                                                                                                   |
+|-------------------------------|----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| access-id                     | Yes      | string  | The access id for your auth method                                                                                                                                                                      |
+| access-type                   | No       | string  | The login method to use.  Must be `jwt` or `aws_iam`.  Defaults to `jwt`                                                                                                                                |
+| api-url                       | No       | string  | The API endpoint to use.  Defaults to `https://api.akeyless.io`                                                                                                                                         |
+| producer-for-aws-access       | No       | string  | Path to an AWS dynamic producer.  If provided, AWS credentials will be fetched from it and exported to the environment                                                                                  |
+| static-secrets                | No       | string  | A JSON object as a string, with a list of static secrets to fetch/export.  The key should be the path to the secret and the value should be the name of the environment variable/output to save it to.  |
+| dynamic-secrets               | No       | string  | A JSON object as a string, with a list of dynamic secrets to fetch/export.  The key should be the path to the secret and the value should be the name of the environment variable/output to save it to. |
+| export-secrets-to-outputs     | No       | boolean | True/False to denote if static/dynamic secrets should be exported as environment variables.  Defaults to `true`                                                                                         |
+| export-secrets-to-environment | No       | boolean | True/False to denote if static/dynamic secrets should be exported as action outputs.  Defaults to `true`                                                                                                |
+
 ## Outputs
 
+The job outputs are determined by the values set in your `static-secrets` and `dynamic-secrets` inputs, as well as whether or not the `export-secrets-to-outputs` is set to true (which it is by default).
+
 ## Example usage
+
+```
+jobs:
+    build:
+        # ...
+        steps:
+            # ...
+            - name: Fetch everything from AKeyless
+              uses: cmancone/akeyless-action@v1.0.0
+              with:
+                access-id: p-your-access-id
+                producer-for-aws-access: /path/to/aws/producer
+                static-secrets: '{"/path/to/static/secret":"output_name","/path/to/another/secret":"also_env_var_name"}'
+                dynamic-secrets: '{"/path/to/dynamic/secret":"another_output_name"}'
+            # ...
+```
