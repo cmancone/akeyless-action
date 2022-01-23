@@ -68,16 +68,22 @@ The job outputs are determined by the values set in your `static-secrets` and `d
 
 ```
 jobs:
-    build:
-        # ...
-        steps:
-            # ...
-            - name: Fetch everything from AKeyless
-              uses: cmancone/akeyless-action@v1.0.0
-              with:
-                access-id: p-your-access-id
-                producer-for-aws-access: /path/to/aws/producer
-                static-secrets: '{"/path/to/static/secret":"output_name","/path/to/another/secret":"also_env_var_name"}'
-                dynamic-secrets: '{"/path/to/dynamic/secret":"another_output_name"}'
-            # ...
+  fetch_some_secrets:
+    runs-on: ubuntu-latest
+    permissions: # Must change the job token permissions to use JWT auth
+      id-token: write
+      contents: read
+    name: Fetch some static secrets
+    steps:
+      - name: Fetch secrets from AKeyless
+        id: fetch-secrets
+        uses: cmancone/akeyless-action@v1.0.0
+        with:
+          access-id: p-your-access-id-here
+          # we use a JSON string because Github actions don't support dictionaries as inputs
+          static-secrets: '{"/path/to/static/secret":"output_name","/path/to/another/secret":"also_env_var_name"}'
+          dynamic-secrets: '{"/path/to/dynamic/secret":"another_output_name"}'
+          # these are true by default, but left here for reference
+          export-secrets-to-outputs: true
+          export-secrets-to-environment: true
 ```
