@@ -64,20 +64,15 @@ async function exportStaticSecrets(akeylessToken, staticSecrets, apiUrl, exportS
     const api = akeylessApi.api(apiUrl);
     let toAwait = []
     for (const [akeylessPath, variableName] of Object.entries(staticSecrets)) {
-        let promise = getStaticSecret(
+        toAwait.push(getStaticSecret(
             api,
             akeylessPath,
             variableName,
             akeylessToken,
             exportSecretsToOutputs,
             exportSecretsToEnvironment,
-        );
-        core.debug('pushing to list:');
-        core.debug(promise);
-        toAwait.push(promise);
+        ));
     }
-    core.debug('list:');
-    core.debug(toAwait);
     return toAwait;
 }
 

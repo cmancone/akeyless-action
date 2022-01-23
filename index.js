@@ -81,6 +81,7 @@ async function run() {
         try {
             await Promise.all([first, second])
         } catch (error) {
+            core.debug(err.stack);
             throw error;
         }
 
@@ -96,6 +97,7 @@ if (require.main === module) {
         core.debug('Starting main run');
         run();
     } catch (error) {
+        core.debug(err.stack);
         core.setFailed(error.message);
         core.debug(error.message);
     }
