@@ -77,16 +77,8 @@ async function run() {
         } else {
             core.debug(`Dynamic Secrets: Skipping step because no dynamic secrets were specified`);
         }
-
-        try {
-            await Promise.all([first, second])
-        } catch (error) {
-            core.debug(error.stack);
-            throw error;
-        }
-
     } catch (error) {
-        core.setFailed(error.message);
+        throw error;
     }
 }
 
