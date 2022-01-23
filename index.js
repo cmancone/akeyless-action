@@ -21,15 +21,16 @@ async function run() {
         core.debug(`access id: ${accessId}`);
         core.debug(`Fetch akeyless token with access type ${accessType}`);
 
+        let akeylessToken;
         try {
-            const akeylessLoginResponse = await auth.akeylessLogin(accessId, accessType, apiUrl);
+            akeylessLoginResponse = await auth.akeylessLogin(accessId, accessType, apiUrl);
+            akeylessToken = akeylessLoginResponse['token'];
         } catch (error) {
             core.error(`Failed to login to AKeyless: ${error}`);
             core.setFailed(`Failed to login to AKeyless: ${error}`);
             return;
         }
 
-        akeylessToken = akeylessLoginResponse['token'];
         core.debug(`AKeyless token length: ${akeylessToken.length}`);
 
         // Logging into AWS and fetching secrets can all run at the same time,
