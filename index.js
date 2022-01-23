@@ -20,7 +20,9 @@ async function run() {
         } = input.fetchAndValidateInput();
         core.debug(`access id: ${accessId}`);
         core.debug(`Fetch akeyless token with access type ${accessType}`);
-        const akeylessToken = auth.akeylessLogin(accessId, accessType, apiUrl);
+        const akeylessLoginResponse = await auth.akeylessLogin(accessId, accessType, apiUrl);
+        core.debug(akeylessLoginResponse);
+        akeylessToken = akeylessLoginResponse['token'];
         core.debug(`AKeyless token length: ${akeylessToken.length}`);
         if (producerForAwsAccess) {
             core.debug(`Fetch AWS credentials with producer ${producerForAwsAccess}`);

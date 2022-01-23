@@ -17,7 +17,7 @@ async function jwtLogin(apiUrl, accessId) {
     }
     try {
         core.debug('Fetching token from AKeyless');
-        akeylessResponse = await api.auth(akeyless.Auth.constructFromObject({
+        return api.auth(akeyless.Auth.constructFromObject({
             'access-type': 'jwt',
             'access-id': accessId,
             'jwt': githubToken,
@@ -25,9 +25,8 @@ async function jwtLogin(apiUrl, accessId) {
     } catch (error) {
         core.debug('Failed to login to AKeyless');
         core.setFailed(`Failed to login to AKeyless: ${error.message}`);
+        throw new Error(`Failed to login to AKeyless: ${error.message}`);
     }
-    core.debug(Object.keys(akeylessResponse));
-    return akeylessResponse['token'];
 }
 async function awsIamLogin(apiUrl, accessId) {
     api = akeylessApi.api(apiUrl);
@@ -52,9 +51,7 @@ const allowedAccessTypes = Object.keys(login);
 async function akeylessLogin(accessId, accessType, apiUrl) {
     try {
         core.debug('fetch token');
-        const result = await login[accessType](apiUrl, accessId)
-        core.debug(Object.keys(result))
-        return result['token'];
+        return login[accessType](apiUrl, accessId);
     } catch (error) {
         core.setFailed(`AKeyless login failed: ${error.message}`);
     }
