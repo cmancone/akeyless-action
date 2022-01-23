@@ -73,6 +73,7 @@ async function exportStaticSecrets(akeylessToken, staticSecrets, apiUrl, exportS
             exportSecretsToEnvironment,
         ));
     }
+    core.debug(toAwait);
     return toAwait;
 }
 
