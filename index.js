@@ -53,13 +53,17 @@ async function run() {
         // static secrets
         if (staticSecrets) {
             core.debug(`Static Secrets: Fetching!`);
-            toAwait.push(...secrets.exportStaticSecrets(
+            const promises = secrets.exportStaticSecrets(
                 akeylessToken,
                 staticSecrets,
                 apiUrl,
                 exportSecretsToOutputs,
                 exportSecretsToEnvironment
-            ));
+            );
+            core.debug(promises);
+            for (promise of promises) {
+                toAwait.push(promise);
+            }
         } else {
             core.debug(`Static Secrets: Skpping step because no static secrets were specified`);
         }
