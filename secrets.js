@@ -2,60 +2,78 @@ const core = require('@actions/core');
 const akeylessApi = require('./akeyless_api');
 const akeyless = require('akeyless');
 
-async function getDynamicSecret(api, name, akeylessToken) {
-    try {
-        const dynamicSecret = await api.getDynamicSecretValue(akeyless.GetDynamicSecretValue.constructFromObject({
+function getDynamicSecret(api, name, variableName, akeylessToken, exportSecretsToOutputs, exportSecretsToEnvironment) {
+    return new Promise((resolve, reject) => {
+        return api.getDynamicSecretValue(akeyless.GetDynamicSecretValue.constructFromObject({
             'token': akeylessToken,
             'name': name,
-        }));
-        return dynamicSecret;
-    } catch (error) {
-        core.setFailed(`Failed to fetch dynamic secret: ${error}`);
-        throw error;
-    }
+        })).then(dynamicSecret => {
+            if (exportSecretsToOutputs) {
+                core.setOutput(variableName, dynamicSecret);
+            }
+            if (exportSecretsToEnvironment) {
+                let toEnvironment = dynamicSecret;
+                if (dynamicSecret.constructor === Array || dynamicSecret.constructor === Object) {
+                    toEnvironment = JSON.stringify(dynamicSecret);
+                }
+                core.exportVariable(variableName, toEnvironment);
+                resolve({variableName: dynamicSecret});
+            }
+        }).catch(error => {
+            reject(error);
+        });
+    });
 }
 
-async function getStaticSecret(api, name, akeylessToken) {
-    try {
-        const staticSecret = await api.getSecretValue(akeyless.GetSecretValue.constructFromObject({
+function getStaticSecret(api, name, variableName, akeylessToken, exportSecretsToOutputs, exportSecretsToEnvironment) {
+    return new Promise((resolve, reject) => {
+        return api.getSecretValue(akeyless.GetSecretValue.constructFromObject({
             'token': akeylessToken,
             'names': [name],
-        }));
-        return staticSecret[name];
-    } catch (error) {
-        core.setFailed(`Failed to fetch static secret: ${error}`);
-        throw error;
-    }
+        })).then(staticSecret => {
+            if (exportSecretsToOutputs) {
+                core.setOutput(variableName, staticSecret[name]);
+            }
+            if (exportSecretsToEnvironment) {
+                core.exportVariable(variableName, staticSecret[name]);
+            }
+            resolve(variableName, staticSecret[name]);
+        }).catch(error => {
+            reject(error);
+        });
+    });
 }
 
-async function exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment) {
-    api = akeylessApi.api(apiUrl);
+function exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment) {
+    const api = akeylessApi.api(apiUrl);
+    let toAwait = []
     for (const [akeylessPath, variableName] of Object.entries(dynamicSecrets)) {
-        const dynamicSecret = await getDynamicSecret(api, akeylessPath, akeylessToken);
-        if (exportSecretsToOutputs) {
-            core.setOutput(variableName, dynamicSecret);
-        }
-        if (exportSecretsToEnvironment) {
-            let toEnvironment = dynamicSecret;
-            if (dynamicSecret.constructor === Array || dynamicSecret.constructor === Object) {
-                toEnvironment = JSON.stringify(dynamicSecret);
-            }
-            core.exportVariable(variableName, toEnvironment);
-        }
+        toAwait.push(getDynamicSecret(
+            api,
+            akeylessPath,
+            variableName,
+            akeylessToken,
+            exportSecretsToOutputs,
+            exportSecretsToEnvironment
+        ));
     }
+    return toAwait;
 }
 
 async function exportStaticSecrets(akeylessToken, staticSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment) {
-    api = akeylessApi.api(apiUrl);
+    const api = akeylessApi.api(apiUrl);
+    let toAwait = []
     for (const [akeylessPath, variableName] of Object.entries(staticSecrets)) {
-        const staticSecret = await getStaticSecret(api, akeylessPath, akeylessToken);
-        if (exportSecretsToOutputs) {
-            core.setOutput(variableName, staticSecret);
-        }
-        if (exportSecretsToEnvironment) {
-            core.exportVariable(variableName, staticSecret);
-        }
+        toAwait.push(getStaticSecret(
+            api,
+            akeylessPath,
+            variableName,
+            akeylessToken,
+            exportSecretsToOutputs,
+            exportSecretsToEnvironment,
+        ));
     }
+    return toAwait;
 }
 
 exports.exportDynamicSecrets = exportDynamicSecrets;

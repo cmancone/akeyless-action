@@ -3,6 +3,12 @@ const akeylessApi = require('./akeyless_api');
 const akeyless = require('akeyless')
 const akeylessCloudId = require('akeyless-cloud-id')
 
+function action_fail(message) {
+    core.debug(message);
+    core.setFailed(message);
+    throw new Error(message);
+}
+
 async function jwtLogin(apiUrl, accessId) {
     api = akeylessApi.api(apiUrl);
     core.debug(apiUrl);
@@ -12,8 +18,7 @@ async function jwtLogin(apiUrl, accessId) {
         core.debug('Fetching JWT from Github');
         githubToken = await core.getIDToken();
     } catch (error) {
-        core.debug('Failed to fetch JWT');
-        core.setFailed(`Failed to fetch Github JWT: ${error.message}`);
+        action_fail(`Failed to fetch Github JWT: ${error.message}`);
     }
     try {
         core.debug('Fetching token from AKeyless');
@@ -23,9 +28,7 @@ async function jwtLogin(apiUrl, accessId) {
             'jwt': githubToken,
         }));
     } catch (error) {
-        core.debug('Failed to login to AKeyless');
-        core.setFailed(`Failed to login to AKeyless: ${error.message}`);
-        throw new Error(`Failed to login to AKeyless: ${error.message}`);
+        action_fail(`Failed to login to AKeyless: ${error.message}`);
     }
 }
 async function awsIamLogin(apiUrl, accessId) {
@@ -33,13 +36,17 @@ async function awsIamLogin(apiUrl, accessId) {
     try {
         const cloudId = await akeylessCloudId();
     } catch (error) {
-        core.setFailed(`Failed to fetch cloud id: ${error.message}`);
+        action_fail(`Failed to fetch cloud id: ${error.message}`);
     }
-    return await api.auth(akeyless.Auth.constructFromObject({
-        'access-type': 'aws_iam',
-        'access-id': accessId,
-        'cloud-id': cloudId,
-    }));
+    try {
+        return api.auth(akeyless.Auth.constructFromObject({
+            'access-type': 'aws_iam',
+            'access-id': accessId,
+            'cloud-id': cloudId,
+        }));
+    } catch (error) {
+        action_fail(`Failed to login to AKeyless: ${error.message}`);
+    }
 }
 
 const login = {
@@ -53,7 +60,7 @@ async function akeylessLogin(accessId, accessType, apiUrl) {
         core.debug('fetch token');
         return login[accessType](apiUrl, accessId);
     } catch (error) {
-        core.setFailed(`AKeyless login failed: ${error.message}`);
+        action_fail(error.message);
     }
 };
 

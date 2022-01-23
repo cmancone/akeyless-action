@@ -15,6 +15,6 @@ test('jwt login', async () => {
     api.auth = jest.fn(() => Promise.resolve({'token': 'akeyless-token'}));
     akeylessApi.api = jest.fn(() => api);
     akeyless.Auth.constructFromObject = jest.fn(() => 'auth_body');
-    await expect(auth.akeylessLogin('p-12345', 'jwt', 'https://api.akeyless.io')).resolves.toEqual('akeyless-token');
+    await expect(auth.akeylessLogin('p-12345', 'jwt', 'https://api.akeyless.io')).resolves.toEqual({'token': 'akeyless-token'});
     expect(api.auth).toHaveBeenCalledWith('auth_body');
 });

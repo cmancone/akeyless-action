@@ -20,27 +20,67 @@ async function run() {
         } = input.fetchAndValidateInput();
         core.debug(`access id: ${accessId}`);
         core.debug(`Fetch akeyless token with access type ${accessType}`);
-        const akeylessLoginResponse = await auth.akeylessLogin(accessId, accessType, apiUrl);
-        core.debug(akeylessLoginResponse);
+
+        try {
+            const akeylessLoginResponse = await auth.akeylessLogin(accessId, accessType, apiUrl);
+        } catch (error) {
+            core.error(`Failed to login to AKeyless: ${error}`);
+            core.setFailed(`Failed to login to AKeyless: ${error}`);
+            return;
+        }
+
         akeylessToken = akeylessLoginResponse['token'];
         core.debug(`AKeyless token length: ${akeylessToken.length}`);
+
+        // Logging into AWS and fetching secrets can all run at the same time,
+        // and we don't need to do anything with the response from them.  Therefore, collect
+        // their promises and then just await for all of them.
+        let toAwait = []
+
+        // AWS Access
         if (producerForAwsAccess) {
-            core.debug(`Fetch AWS credentials with producer ${producerForAwsAccess}`);
-            awsAccess.awsLogin(akeylessToken, producerForAwsAccess, apiUrl);
+            core.debug(`AWS Access: Fetching credentials with producer ${producerForAwsAccess}`);
+            toAwait.push(awsAccess.awsLogin(
+                akeylessToken,
+                producerForAwsAccess,
+                apiUrl
+            ));
         } else {
-            core.debug(`No AWS producer specified: skipping AWS access step`);
+            core.debug(`AWS Access: Skipping because no AWS producer is specified`);
         }
+
+        // static secrets
         if (staticSecrets) {
-            core.debug(`Fetch static secrets`);
-            secrets.exportStaticSecrets(akeylessToken, staticSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment);
+            core.debug(`Static Secrets: Fetching!`);
+            toAwait.push(...secrets.exportStaticSecrets(
+                akeylessToken,
+                staticSecrets,
+                apiUrl,
+                exportSecretsToOutputs,
+                exportSecretsToEnvironment
+            ));
         } else {
-            core.debug(`No static secrets specified: skipping static secret export step`);
+            core.debug(`Static Secrets: Skpping step because no static secrets were specified`);
         }
+
+        // dynamic secrets
         if (dynamicSecrets) {
-            core.debug(`Fetch dynamic secrets`);
-            secrets.exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment);
+            core.debug(`Dynamic Secrets: Fetching!`);
+            toAwait.push(...secrets.exportDynamicSecrets(
+                akeylessToken,
+                dynamicSecrets,
+                apiUrl,
+                exportSecretsToOutputs,
+                exportSecretsToEnvironment
+            ));
         } else {
-            core.debug(`No dynamic secrets specified: skipping dynamic secret export step`);
+            core.debug(`Dynamic Secrets: Skipping step because no dynamic secrets were specified`);
+        }
+
+        try {
+            await Promise.all([first, second])
+        } catch (error) {
+            throw error;
         }
 
     } catch (error) {
@@ -56,5 +96,6 @@ if (require.main === module) {
         run();
     } catch (error) {
         core.setFailed(error.message);
+        core.debug(error.message);
     }
 }
