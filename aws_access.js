@@ -11,7 +11,7 @@ async function awsLogin(akeylessToken, producerForAwsAccess, apiUrl) {
         })).then(awsCredentials => {
             const accessKeyId = awsCredentials['access_key_id'];
             const secretAccessKey = awsCredentials['secret_access_key'];
-            const sessionToken = awsCredentials['session_token'];
+            const sessionToken = awsCredentials['security_token'];
 
             core.setSecret(accessKeyId);
             core.exportVariable('AWS_ACCESS_KEY_ID', accessKeyId);

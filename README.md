@@ -87,3 +87,7 @@ jobs:
           export-secrets-to-outputs: true
           export-secrets-to-environment: true
 ```
+
+See also:
+
+https://github.com/cmancone/akeyless-actions-example
