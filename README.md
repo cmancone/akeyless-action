@@ -77,7 +77,7 @@ jobs:
     steps:
       - name: Fetch secrets from AKeyless
         id: fetch-secrets
-        uses: cmancone/akeyless-action@v1.0.0
+        uses: cmancone/akeyless-action@v1
         with:
           access-id: p-your-access-id-here
           # we use a JSON string because Github actions don't support dictionaries as inputs
