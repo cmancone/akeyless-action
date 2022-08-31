@@ -9,6 +9,7 @@ awsAccess = require('./aws_access');
 
 test('jwt login', async () => {
     core.setSecret = jest.fn(() => {});
+    core.setOuput = jest.fn(() => {});
     core.exportVariable = jest.fn(() => {});
     api = jest.fn(() => {});
     api.getDynamicSecretValue = jest.fn(() => Promise.resolve({
