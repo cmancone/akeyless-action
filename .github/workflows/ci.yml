@@ -10,10 +10,10 @@ jobs:
   run_tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: |
-          npm install
-          npm run test
+    - uses: actions/checkout@v2
+    - run: |
+        npm install
+        npm run test
 
   fetch_static_secrets:
     runs-on: ubuntu-latest
@@ -22,14 +22,19 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Fetch static secrets from AKeyless
-        id: fetch-static-secrets
-        uses: ./   # IMPORTANT - this references './' instead of the Marketplace's listing
-        with:
-          access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
-          static-secrets: '{"/personal-keys/mccarthy/MyFirstSecret":"my_first_secret"}'
-          export-secrets-to-outputs: true
-          export-secrets-to-environment: true
-          
-      - name: Output your secret (this should be masked in logs and terminal output)
-        run: echo "Your secret is ${{ steps.fetch-static-secrets.outputs.my_first_secret }}"
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Fetch static secrets from AKeyless
+      id: fetch-static-secrets
+      uses: ./   # IMPORTANT - this references './' instead of the Marketplace's listing
+      with:
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        static-secrets: '{"/personal-keys/mccarthy/MyFirstSecret":"my_first_secret"}'
+        export-secrets-to-outputs: true
+        export-secrets-to-environment: true
+        
+    - name: Output your secret (this should be masked in logs and terminal output)
+      run: echo "Your secret is ${{ steps.fetch-static-secrets.outputs.my_first_secret }}"
