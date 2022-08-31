@@ -15,7 +15,7 @@ test('export dynamic secrets', async () => {
     }
 
     core.exportVariable = jest.fn(() => {});
-    core.setOutput = jest.fn(() => {});
+    core.setSecret = jest.fn(() => {});
     api = jest.fn(() => {});
     api.getDynamicSecretValue = jest.fn(() => Promise.resolve(dynamicSecret));
     akeylessApi.api = jest.fn(() => api);
@@ -26,7 +26,7 @@ test('export dynamic secrets', async () => {
         'token': 'akeyless-token',
         'name': '/path/to/dynamic/producer',
     });
-    expect(core.setOutput).toHaveBeenCalledWith('sup', dynamicSecret);
+    expect(core.setSecret).toHaveBeenCalledWith('sup', dynamicSecret);
     expect(core.exportVariable).toHaveBeenCalledWith('sup', JSON.stringify(dynamicSecret));
 });
 
@@ -36,7 +36,7 @@ test('export dynamic secrets', async () => {
     }
 
     core.exportVariable = jest.fn(() => {});
-    core.setOutput = jest.fn(() => {});
+    core.setSecret = jest.fn(() => {});
     api = jest.fn(() => {});
     api.getSecretValue = jest.fn(() => Promise.resolve(staticSecret));
     akeylessApi.api = jest.fn(() => api);
@@ -47,6 +47,6 @@ test('export dynamic secrets', async () => {
         'token': 'akeyless-token',
         'names': ['/path/to/static/secret'],
     });
-    expect(core.setOutput).toHaveBeenCalledWith('sup', 'super secret');
+    expect(core.setSecret).toHaveBeenCalledWith('sup', 'super secret');
     expect(core.exportVariable).toHaveBeenCalledWith('sup', 'super secret');
 });

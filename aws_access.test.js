@@ -14,7 +14,7 @@ test('jwt login', async () => {
     api.getDynamicSecretValue = jest.fn(() => Promise.resolve({
         'access_key_id': 'aws-access-key',
         'secret_access_key': 'aws-secret-key',
-        'session_token': 'aws-session-token',
+        'security_token': 'aws-session-token',
     }));
     akeylessApi.api = jest.fn(() => api);
     akeyless.GetDynamicSecretValue.constructFromObject = jest.fn(() => 'get_dynamic_secret_body');

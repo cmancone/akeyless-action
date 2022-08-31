@@ -9,7 +9,7 @@ function getDynamicSecret(api, name, variableName, akeylessToken, exportSecretsT
             'name': name,
         })).then(dynamicSecret => {
             if (exportSecretsToOutputs) {
-                core.setOutput(variableName, dynamicSecret);
+                core.setSecret(variableName, dynamicSecret);
             }
             if (exportSecretsToEnvironment) {
                 let toEnvironment = dynamicSecret;
@@ -32,7 +32,7 @@ function getStaticSecret(api, name, variableName, akeylessToken, exportSecretsTo
             'names': [name],
         })).then(staticSecret => {
             if (exportSecretsToOutputs) {
-                core.setOutput(variableName, staticSecret[name]);
+                core.setSecret(variableName, staticSecret[name]);
             }
             if (exportSecretsToEnvironment) {
                 core.exportVariable(variableName, staticSecret[name]);

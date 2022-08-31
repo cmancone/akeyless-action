@@ -8,6 +8,16 @@ This action will login to AKeyless using JWT or IAM auth and then fetch secrets 
 4. [Outputs](#outputs)
 5. [Example Usage](#example-usage)
 
+**Impotant**: Note that default usage relies on using the Github JWT to login to Akeyless.  To make this available, you have to configure it in your job workflow:
+
+```
+    permissions: # Must change the job token permissions to use JWT auth
+      id-token: write
+      contents: read
+```
+
+See the example usage below.
+
 ## Authentication Methods
 
 This action only supports authenticating to AKeyless via JWT auth (using the Github OIDC token) or via IAM Auth (using a role attached to a cloud-hosted Github runner).  I don't plan to support additional authentication methods because there isn't much point (with the possible exception of Universal Identity).  After all, any runner can login to AKeyless using OIDC without storing permanent access credentials.  IAM auth is also supported in case you are using a runner hosted in your cloud account and so are already using IAM auth anyway - this will also give your runner access to AKeyless without storing permanent access credentials.
@@ -77,7 +87,7 @@ jobs:
     steps:
       - name: Fetch secrets from AKeyless
         id: fetch-secrets
-        uses: cmancone/akeyless-action@v1
+        uses: cmancone/akeyless-action@v2
         with:
           access-id: p-your-access-id-here
           # we use a JSON string because Github actions don't support dictionaries as inputs
