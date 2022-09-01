@@ -36,7 +36,7 @@ function getStaticSecret(api, name, variableName, akeylessToken, exportSecretsTo
             'names': [name],
         })).then(staticSecret => {
             // Mask secret value in output
-            var secretValue = staticSecret[name];
+            const secretValue = staticSecret[name];
             core.setSecret(secretValue);
             
             if (exportSecretsToOutputs) {
