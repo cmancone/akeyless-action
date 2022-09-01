@@ -8,9 +8,13 @@ function getDynamicSecret(api, name, variableName, akeylessToken, exportSecretsT
             'token': akeylessToken,
             'name': name,
         })).then(dynamicSecret => {
+            // Mask secret value in output
+            core.setSecret(variableName, dynamicSecret);
+
             if (exportSecretsToOutputs) {
-                core.setSecret(variableName, dynamicSecret);
+                core.setOutput(variableName, dynamicSecret);
             }
+
             if (exportSecretsToEnvironment) {
                 let toEnvironment = dynamicSecret;
                 if (dynamicSecret.constructor === Array || dynamicSecret.constructor === Object) {
@@ -31,13 +35,18 @@ function getStaticSecret(api, name, variableName, akeylessToken, exportSecretsTo
             'token': akeylessToken,
             'names': [name],
         })).then(staticSecret => {
+            // Mask secret value in output
+            const secretValue = staticSecret[name];
+            core.setSecret(secretValue);
+            
             if (exportSecretsToOutputs) {
-                core.setSecret(variableName, staticSecret[name]);
+                core.setOutput(variableName, secretValue);
             }
+
             if (exportSecretsToEnvironment) {
-                core.exportVariable(variableName, staticSecret[name]);
+                core.exportVariable(variableName, secretValue);
             }
-            resolve(variableName, staticSecret[name]);
+            resolve(variableName, secretValue);
         }).catch(error => {
             reject(error);
         });
