@@ -13,6 +13,7 @@ test('export dynamic secrets', async () => {
         'secret_access_key': 'aws-secret-key',
         'session_token': 'aws-session-token',
     }
+    core.setSecret = jest.fn(() => {});
     core.setOutput = jest.fn(() => {});
     core.exportVariable = jest.fn(() => {});
     api = jest.fn(() => {});
@@ -25,14 +26,16 @@ test('export dynamic secrets', async () => {
         'token': 'akeyless-token',
         'name': '/path/to/dynamic/producer',
     });
+    expect(core.setSecret).toHaveBeenCalledWith('sup', dynamicSecret);
     expect(core.setOutput).toHaveBeenCalledWith('sup', dynamicSecret);
     expect(core.exportVariable).toHaveBeenCalledWith('sup', JSON.stringify(dynamicSecret));
 });
 
-test('export dynamic secrets', async () => {
+test('export static secrets', async () => {
     const staticSecret = {
         '/path/to/static/secret': 'super secret',
     }
+    core.setSecret = jest.fn(() => {});
     core.setOutput = jest.fn(() => {});
     core.exportVariable = jest.fn(() => {});
     api = jest.fn(() => {});
@@ -45,6 +48,7 @@ test('export dynamic secrets', async () => {
         'token': 'akeyless-token',
         'names': ['/path/to/static/secret'],
     });
+    expect(core.setSecret).toHaveBeenCalledWith('super secret');
     expect(core.setOutput).toHaveBeenCalledWith('sup', 'super secret');
     expect(core.exportVariable).toHaveBeenCalledWith('sup', 'super secret');
 });
