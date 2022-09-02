@@ -18,17 +18,16 @@ jobs:
       with:
         fetch-depth: 0
 
-    # Use local code to confirm operation via '/.' access path
     - name: Fetch static secrets from AKeyless
       id: fetch-static-secrets
-      uses: ./
+      uses: ./   # IMPORTANT - this references './' instead of the Marketplace's listing
       with:
-        access-id: p-jiu4ebrbyalq
-        static-secrets: '{"/MyFirstSecret":"my_first_secret"}'
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        static-secrets: '{"/personal-keys/mccarthy/MyFirstSecret":"my_first_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
         
-    - name: Confirm secrets are available and masked
+    - name: Output your secret (this should be masked in logs and terminal output)
       run: |
         echo "Your output secret is ${{ steps.fetch-static-secrets.outputs.my_first_secret }}"
         echo "Your environment secret is ${{ env.my_first_secret }}"
