@@ -19,7 +19,7 @@ const dictInputs = {
 };
 
 const fetchAndValidateInput = () => {
-  let params = {
+  const params = {
     accessId: core.getInput('access-id', {required: true}),
     accessType: core.getInput('access-type'),
     apiUrl: core.getInput('api-url'),
@@ -56,7 +56,7 @@ const fetchAndValidateInput = () => {
     }
     try {
       parsed = JSON.parse(params[paramKey]);
-      if (parsed.constructor != Object) {
+      if (parsed.constructor !== Object) {
         throw new Error(`Input '${inputId}' did not contain a valid JSON dictionary`);
       }
       params[paramKey] = parsed;
