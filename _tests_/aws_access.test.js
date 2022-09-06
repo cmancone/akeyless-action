@@ -1,11 +1,11 @@
 jest.mock('@actions/core');
-jest.mock('./akeyless_api');
+jest.mock('../src/akeyless_api');
 jest.mock('akeyless');
 
 core = require('@actions/core');;
-akeylessApi = require('./akeyless_api');
+akeylessApi = require('../src/akeyless_api');
 akeyless = require('akeyless');
-awsAccess = require('./aws_access');
+awsAccess = require('../src/aws_access');
 
 test('jwt login', async () => {
     core.setSecret = jest.fn(() => {});

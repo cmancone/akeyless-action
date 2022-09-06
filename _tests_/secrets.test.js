@@ -1,11 +1,11 @@
 jest.mock('@actions/core');
-jest.mock('./akeyless_api');
+jest.mock('../src/akeyless_api');
 jest.mock('akeyless');
 
 core = require('@actions/core');;
-akeylessApi = require('./akeyless_api');
+akeylessApi = require('../src/akeyless_api');
 akeyless = require('akeyless');
-secrets = require('./secrets');
+secrets = require('../src/secrets');
 
 test('export dynamic secrets', async () => {
     const dynamicSecret = {

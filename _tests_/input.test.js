@@ -1,7 +1,7 @@
 jest.mock('@actions/core');
 
 core = require('@actions/core');
-input = require('./input')
+input = require('../src/input')
 
 test('Input is all good', () => {
     core.getInput = jest.fn()

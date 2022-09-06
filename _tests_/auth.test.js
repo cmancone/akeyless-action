@@ -1,13 +1,13 @@
 jest.mock('@actions/core');
-jest.mock('./akeyless_api');
+jest.mock('../src/akeyless_api');
 jest.mock('akeyless');
 jest.mock('akeyless-cloud-id');
 
 core = require('@actions/core');;
-akeylessApi = require('./akeyless_api');
+akeylessApi = require('../src/akeyless_api');
 akeyless = require('akeyless');
 akeylessCloudId = require('akeyless-cloud-id');
-auth = require('./auth');
+auth = require('../src/auth');
 
 test('jwt login', async () => {
     core.getIDToken = jest.fn(() => Promise.resolve('github-jwt'));
