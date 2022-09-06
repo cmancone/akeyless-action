@@ -3,7 +3,7 @@ const akeylessApi = require('./akeyless_api');
 const akeyless = require('akeyless');
 
 async function awsLogin(akeylessToken, producerForAwsAccess, apiUrl) {
-  let api = akeylessApi.api(apiUrl);
+  const api = akeylessApi.api(apiUrl);
   return new Promise((resolve, reject) => {
     return api
       .getDynamicSecretValue(
