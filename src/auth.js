@@ -13,7 +13,8 @@ async function jwtLogin(apiUrl, accessId) {
   api = akeylessApi.api(apiUrl);
   core.debug(apiUrl);
   let githubToken = undefined;
-  let akeylessResponse = undefined;
+  const akeylessResponse = undefined;
+
   try {
     core.debug('Fetching JWT from Github');
     githubToken = await core.getIDToken();
@@ -35,11 +36,18 @@ async function jwtLogin(apiUrl, accessId) {
 }
 async function awsIamLogin(apiUrl, accessId) {
   api = akeylessApi.api(apiUrl);
+  let cloudId = undefined;
+
   try {
-    const cloudId = await akeylessCloudId();
+    cloudId = await akeylessCloudId();
   } catch (error) {
     action_fail(`Failed to fetch cloud id: ${error.message}`);
   }
+
+  if (cloudId === undefined) {
+    action_fail(`CloudId is undefined.`);
+  }
+
   try {
     return api.auth(
       akeyless.Auth.constructFromObject({
