@@ -4,14 +4,13 @@
 
 This action will login to AKeyless using JWT or IAM authentication and then fetch secrets and/or provision AWS access via a dynamic producer.
 
-1. [Inputs](#inputs)
-2. [Outputs](#outputs)
-3. [Job Permissions Requirement](#job-permissions-requirement)
-3. [Required AKeyless Configuration](#akeyless-setup)
-    1. [Authentication Methods](#authentication-methods)
-    2. [Setting up JWT Auth](#setting-up-jwt-auth)
-4. [Example Usage](#example-usage)
-5. [Maintainer Statement](#maintainer-statement)
+- [AKeyless GitHub Action](#akeyless-github-action)
+  - [Inputs](#inputs)
+  - [Outputs](#outputs)
+  - [Job Permissions Requirement](#job-permissions-requirement)
+- [AKeyless Setup](#akeyless-setup)
+  - [Authentication Methods](#authentication-methods)
+  - [Setting up JWT Auth](#setting-up-jwt-auth)
 
 ### Inputs
 
@@ -82,16 +81,20 @@ After following these steps, you'll be ready to use JWT Auth from your GitHub ru
 
 **(1) Note:** The unique identifier is mainly used for auditing/billing purposes, so there isn't one correct answer here.  `repository` is a sensible default but if you are uncertain, talk to AKeyless for more details.
 
-**(2) Note:** Subclaim checks allow AKeyless to grant access to specific workflows, based on the claims that GitHub provides in the JWT.  Using the example JWT from [the documentation](https://docs.GitHub.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#understanding-the-oidc-token), you could set a subclaim check in AKeyless of:
+**(2) Note:** Subclaim checks allow AKeyless to grant access to specific workflows, based on the claims that GitHub provides in the JWT.  Using the example JWT from [the documentation](https://docs.GitHub.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#understanding-the-oidc-token), you could set a subclaim check in AKeyless (using example below) to limit access to workflows that were triggered from the main branch in the `octo-org/octo-repo` repository.:
 
 ```
 repository=octo-org/octo-repo
 ref=refs/heads/main
 ```
 
-to limit access to workflows that were triggered from the main branch in the `octo-org/octo-repo` repository.
-
 ## Example
+
+Here are some examples you can use for guidance:
+
+- A real-world scenario using NuGet Secrets in [LanceMcCarthy/DevOpsExamples => main_build-console.yml](https://github.com/LanceMcCarthy/DevOpsExamples/blob/main/.github/workflows/main_build-console.yml).
+- This Action's CI validation workflow at [LanceMcCarthy/akeyless-action => workflows/ci.yml](https://github.com/LanceMcCarthy/akeyless-action/blob/main/.github/workflows/ci.yml).
+- Use the YAML snippet below for a quick start:
 
 ```
 jobs:
@@ -125,8 +128,4 @@ jobs:
         echo "my_dynamic_secret: ${{ env.my_dynamic_secret }}"
 ```
 
-> Live demo: You can see this used in this Action's CI validation workflow at [workflows/ci.yml](https://github.com/LanceMcCarthy/akeyless-action/blob/main/.github/workflows/ci.yml)
-
-### Maintainer Statement
-
-Although this fork is primarily for publishing the Action to GitHub Marketplace, any new features or fixes will be synced with [the upstream repository](https://github.com/cmancone/akeyless-action) to ensure ongoing maintenance coordination.
+> **Maintainer Statement** This repo is a fork of [cmancone/akeyless-action](https://github.com/cmancone/akeyless-action) and is primarily for code quality, security updates, dependency maintenence, and to publish to the GitHub Marketplace. I will endevor to include any upstream features to ensure ongoing coordination.
