@@ -13,7 +13,7 @@ async function jwtLogin(apiUrl, accessId) {
   api = akeylessApi.api(apiUrl);
   core.debug(apiUrl);
   let githubToken = undefined;
-  const akeylessResponse = undefined;
+  //const akeylessResponse = undefined;
 
   try {
     core.debug('Fetching JWT from Github');
