@@ -1,0 +1,25 @@
+{
+    "env": {
+        "node": true,
+        "commonjs": true,
+        "es2021": true
+    },
+    "extends": ["eslint:recommended", "plugin:github/recommended", "plugin:jest/recommended"],
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {
+        "eslint-comments/no-use": "off",
+        "import/no-namespace": "off",
+        "import/no-commonjs": "off",
+        "i18n-text/no-en": 0,
+        "prefer-template": "warn",
+        "filenames/match-regex": "warn",
+        "github/no-then": "off",
+        "no-unused-vars": "off",
+        "camelcase": "off",
+        "no-undef": "off"
+    }
+}

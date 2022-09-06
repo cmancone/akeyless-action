@@ -4,6 +4,8 @@
   "description": "This action will login to AKeyless using JWT or IAM auth and then fetch secrets and/or provision AWS access via a dynamic producer.",
   "main": "index.js",
   "scripts": {
+    "format": "prettier --write **/*.js",
+    "lint": "eslint **/*.js",
     "test": "jest"
   },
   "repository": {
@@ -24,6 +26,10 @@
     "akeyless-cloud-id": "^1.0.0"
   },
   "devDependencies": {
-    "jest": "^27.4.7"
+    "eslint": "^8.23.0",
+    "eslint-plugin-github": "^4.3.7",
+    "eslint-plugin-jest": "^27.0.1",
+    "jest": "^27.4.7",
+    "prettier": "2.7.1"
   }
 }

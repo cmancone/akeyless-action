@@ -1,0 +1,6 @@
+node_modules/
+.vscode/
+action.yml
+package.json
+package-lock.json
+README.md
