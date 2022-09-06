@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:    
+      - main
 
 jobs:
   fetch_static_secrets:
@@ -20,7 +23,7 @@ jobs:
 
     - name: Fetch static secrets from AKeyless
       id: fetch-static-secrets
-      uses: ./   # IMPORTANT - this references './' instead of the Marketplace's listing
+      uses: ./   # IMPORTANT - in your workflow, this should be 'uses: LanceMcCarthy/akeyless-action@v2'
       with:
         access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
         static-secrets: '{"/personal-keys/mccarthy/MyFirstSecret":"my_first_secret"}'
