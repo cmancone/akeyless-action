@@ -128,4 +128,6 @@ jobs:
         echo "my_dynamic_secret: ${{ env.my_dynamic_secret }}"
 ```
 
-> **Maintainer Statement** This repo is a fork of [cmancone/akeyless-action](https://github.com/cmancone/akeyless-action) and is primarily for code quality, security updates, dependency maintenence, and to publish to the GitHub Marketplace. I will endevor to include any upstream features to ensure ongoing coordination.
+## Feature Requests & Issues
+
+This repo is a fork of [cmancone/akeyless-action](https://github.com/cmancone/akeyless-action). This repo is intended to be the primary source of future development and maintenence for the action published to the GitHub Marketplace. Please open Feature Requests and report Issues here instead of the upstream repo. Thank you!
