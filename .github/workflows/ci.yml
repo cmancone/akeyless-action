@@ -36,17 +36,17 @@ jobs:
         echo "[static] Your output secret is ${{ steps.fetch-static-secrets.outputs.my_first_secret }}"
         echo "[static] Your environment secret is ${{ env.my_first_secret }}"
 
-    - name: Fetch dynamic secrets from AKeyless
-      id: fetch-dynamic-secrets
-      uses: ./
-      with:
-        access-id: 'p-149l6gayzx05'
-        dynamic-secrets: '{"/DevTools/dvlup-azure":"my_dynamic_secret"}'
-        export-secrets-to-outputs: true
-        export-secrets-to-environment: true
+    # - name: Fetch dynamic secrets from AKeyless
+    #   id: fetch-dynamic-secrets
+    #   uses: ./
+    #   with:
+    #     access-id: 'p-149l6gayzx05'
+    #     dynamic-secrets: '{"/DevTools/dvlup-azure":"my_dynamic_secret"}'
+    #     export-secrets-to-outputs: true
+    #     export-secrets-to-environment: true
         
-    - name: Output your secret (masked in output)
-      run: |
-        echo "[dynamic] Your output secret is ${{ steps.fetch-dynamic-secrets.my_dynamic_secret }}"
-        echo "[dynamic] Your environment secret is ${{ env.my_dynamic_secret }}"
+    # - name: Output your secret (masked in output)
+    #   run: |
+    #     echo "[dynamic] Your output secret is ${{ steps.fetch-dynamic-secrets.my_dynamic_secret }}"
+    #     echo "[dynamic] Your environment secret is ${{ env.my_dynamic_secret }}"
         
