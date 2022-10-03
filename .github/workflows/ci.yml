@@ -26,7 +26,7 @@ jobs:
       id: fetch-static-secrets
       uses: ./   # IMPORTANT - in your workflow, this should be 'uses: LanceMcCarthy/akeyless-action@v2'
       with:
-        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        access-id: 'p-fq3qbjjxv839'
         static-secrets: '{"/personal-keys/mccarthy/MyFirstSecret":"my_first_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
@@ -35,12 +35,12 @@ jobs:
       run: |
         echo "[static] Your output secret is ${{ steps.fetch-static-secrets.outputs.my_first_secret }}"
         echo "[static] Your environment secret is ${{ env.my_first_secret }}"
-        
+
     - name: Fetch dynamic secrets from AKeyless
       id: fetch-dynamic-secrets
       uses: ./
       with:
-        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        access-id: 'p-149l6gayzx05'
         dynamic-secrets: '{"/DevTools/dvlup-azure":"my_dynamic_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
