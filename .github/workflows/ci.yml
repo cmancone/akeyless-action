@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - 'investigation/'
   pull_request:
     branches:    
       - main
@@ -26,7 +27,7 @@ jobs:
       uses: ./   # IMPORTANT - in your workflow, this should be 'uses: LanceMcCarthy/akeyless-action@v2'
       with:
         access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
-        static-secrets: '{"/personal-keys/mccarthy/MyFirstSecret":"my_first_secret", "/DevTools/gw-classic-key":"gw_classic_key"}'
+        static-secrets: '{"/personal-keys/mccarthy/MyFirstSecret":"my_first_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
         
@@ -34,11 +35,6 @@ jobs:
       run: |
         echo "[static] Your output secret is ${{ steps.fetch-static-secrets.outputs.my_first_secret }}"
         echo "[static] Your environment secret is ${{ env.my_first_secret }}"
-        
-    - name: Output classic secrets (masked in output)
-      run: |
-        echo "[classic] Your output secret is ${{ steps.fetch-static-secrets.outputs.gw_classic_key }}"
-        echo "[classic] Your environment secret is ${{ env.gw_classic_key }}"
         
     - name: Fetch dynamic secrets from AKeyless
       id: fetch-dynamic-secrets
