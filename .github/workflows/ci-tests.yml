@@ -36,12 +36,12 @@ jobs:
       uses: ./
       with:
         access-id: 'p-fq3qbjjxv839'
-        dynamic-secrets: '{"/DevTools/dvlup-azure":"my_dynamic_secret"}'
+        dynamic-secrets: '{"/DevTools/dvlup-azure":"dynamic_azvault_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
         
     - name: Verify dynamic secrets output
       run: |
-        echo "[dynamic] Your output secret is ${{ steps.fetch-dynamic-secrets.my_dynamic_secret }}"
-        echo "[dynamic] Your environment secret is ${{ env.my_dynamic_secret }}"
+        echo "[dynamic] Your output secret is ${{ steps.fetch-dynamic-secrets.dynamic_azvault_secret }}"
+        echo "[dynamic] Your environment secret is ${{ env.dynamic_azvault_secret }}"
         
