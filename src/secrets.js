@@ -78,6 +78,10 @@ async function exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, expor
           core.setFailed(`getDynamicSecretValue Failed: ${error}`);
         });
 
+      if(dynamicSecret === undefined) {
+        return;
+      }
+
       // Mask secret value in output
       core.setSecret(variableName, dynamicSecret);
 
