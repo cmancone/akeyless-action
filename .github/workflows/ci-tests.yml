@@ -5,9 +5,7 @@ on:
     branches:
       - 'issue/*'
       - 'investigation/*'
-env:
-  AKEYLESS_ACCESS_ID: 'p-fq3qbjjxv839'
-
+ 
 jobs:
   fetch_static_secrets:
     runs-on: ubuntu-latest
@@ -15,6 +13,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    env:
+      AKEYLESS_ACCESS_ID: 'p-fq3qbjjxv839'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
