@@ -96,7 +96,6 @@ async function exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, expor
         }
       })
       .catch(error => {
-        reject(error);
         core.error(`getDynamicSecretValue Failed: ${error}`);
         core.setFailed(`getDynamicSecretValue Failed: ${error}`);
       });
