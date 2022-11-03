@@ -26,10 +26,13 @@ async function run() {
   // AWS Access
   if (producerForAwsAccess) {
     core.debug(`AWS Access: Fetching credentials with producer ${producerForAwsAccess}`);
-    await awsAccess.awsLogin(akeylessToken, producerForAwsAccess, apiUrl).catch(error => {
+
+    try {
+      await awsAccess.awsLogin(akeylessToken, producerForAwsAccess, apiUrl);
+    } catch (error) {
       core.error(`Failed to fetch AWS producer credentials: ${error}`);
       core.setFailed(`Failed to fetch AWS producer credentials: ${error}`);
-    });
+    }
   } else {
     core.debug(`AWS Access: Skipping because no AWS producer is specified`);
   }
@@ -38,10 +41,12 @@ async function run() {
   if (staticSecrets) {
     core.debug(`Static Secrets: Fetching!`);
 
-    await secrets.exportStaticSecrets(akeylessToken, staticSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment).catch(error => {
+    try {
+      await secrets.exportStaticSecrets(akeylessToken, staticSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment);
+    } catch (error) {
       core.error(`Failed to fetch static secrets: ${error}`);
       core.setFailed(`Failed to fetch static secrets: ${error}`);
-    });
+    }
   } else {
     core.debug(`Static Secrets: Skpping step because no static secrets were specified`);
   }
@@ -50,10 +55,12 @@ async function run() {
   if (dynamicSecrets) {
     core.debug(`Dynamic Secrets: Fetching!`);
 
-    await secrets.exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment).catch(error => {
+    try {
+      await secrets.exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment);
+    } catch (error) {
       core.error(`Failed to fetch dynamic secrets: ${error}`);
       core.setFailed(`Failed to fetch dynamic secrets: ${error}`);
-    });
+    }
   } else {
     core.debug(`Dynamic Secrets: Skipping step because no dynamic secrets were specified`);
   }
