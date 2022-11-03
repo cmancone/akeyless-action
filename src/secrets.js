@@ -72,36 +72,39 @@ async function exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, expor
       let secretName = akeylessPath;
 
       await api
-      .getDynamicSecretValue(
-        akeyless.GetDynamicSecretValue.constructFromObject({
-          token: akeylessToken,
-          name: secretName
-        })
-      )
-      .then(dynamicSecret => {
-        // Mask secret value in output
-        core.setSecret(variableName, dynamicSecret);
+        .getDynamicSecretValue(
+          akeyless.GetDynamicSecretValue.constructFromObject({
+            token: akeylessToken,
+            name: secretName
+          })
+        )
+        .then(dynamicSecret => {
+          // Mask secret value in output
+          core.setSecret(variableName, dynamicSecret);
 
-        if (exportSecretsToOutputs) {
-          core.setOutput(variableName, dynamicSecret);
-        }
-
-        if (exportSecretsToEnvironment) {
-          let toEnvironment = dynamicSecret;
-          if (dynamicSecret.constructor === Array || dynamicSecret.constructor === Object) {
-            toEnvironment = JSON.stringify(dynamicSecret);
+          if (exportSecretsToOutputs) {
+            core.setOutput(variableName, dynamicSecret);
           }
-          core.exportVariable(variableName, toEnvironment);
-          resolve({variableName: dynamicSecret});
-        }
-      })
-      .catch(error => {
-        core.error(`getDynamicSecretValue Failed: ${error}`);
-        core.setFailed(`getDynamicSecretValue Failed: ${error}`);
-      });
 
+          if (exportSecretsToEnvironment) {
+            try {
+              let toEnvironment = dynamicSecret;
+              if (dynamicSecret.constructor === Array || dynamicSecret.constructor === Object) {
+                toEnvironment = JSON.stringify(dynamicSecret);
+              }
+              core.exportVariable(variableName, toEnvironment);
+              //resolve({variableName: dynamicSecret});
+            } catch (error) {
+              core.error(`exportSecretsToEnvironment Failed: ${error}`);
+            }
+          }
+        })
+        .catch(error => {
+          //core.error(`getDynamicSecretValue Failed: ${error}`);
+          core.setFailed(`getDynamicSecretValue Failed: ${error}`);
+        });
     } catch (error) {
-      core.error(`Failed to export dynamic secrets: ${error}`);
+      //core.error(`Failed to export dynamic secrets: ${error}`);
       core.setFailed(`Failed to export dynamic secrets: ${error}`);
     }
   }
