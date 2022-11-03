@@ -2,12 +2,10 @@ name: 'CI'
 
 on:
   push:
-    branches:
-      - main
-      - 'investigation/*'
+    branches: [ main ]
   pull_request:
-    branches:    
-      - main
+    branches: [ main ]
+
 env:
   AKEYLESS_ACCESS_ID: 'p-fq3qbjjxv839' # you can also use a secret  ${{ secrets.AKEYLESS_ACCESS_ID }}
 
