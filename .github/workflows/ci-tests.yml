@@ -7,7 +7,7 @@ on:
 jobs:
   fetch_static_secrets:
     runs-on: ubuntu-latest
-    name: Fetch some static secrets
+    name: Fetch static secrets
     permissions:
       id-token: write
       contents: read
@@ -26,11 +26,18 @@ jobs:
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
         
-    - name: Verify static secrets output
-      run: |
-        echo "[static] Your output secret is ${{ steps.fetch-static-secrets.outputs.my_first_secret }}"
-        echo "[static] Your environment secret is ${{ env.my_first_secret }}"
-        
+  fetch_dynamic_secrets:
+    runs-on: ubuntu-latest
+    name: Fetch dynamic secrets
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
     - name: Fetch dynamic secrets from AKeyless
       id: fetch-dynamic-secrets
       uses: ./
@@ -44,4 +51,3 @@ jobs:
       run: |
         echo "[dynamic] Your output secret is ${{ steps.fetch-dynamic-secrets.dynamic_azvault_secret }}"
         echo "[dynamic] Your environment secret is ${{ env.dynamic_azvault_secret }}"
-        
