@@ -12,11 +12,8 @@ function getDynamicSecret(api, secretName, variableName, akeylessToken, exportSe
         })
       )
       .then(dynamicSecret => {
-        core.info(`Dynamic secret ${secretName} was fetched successfully`);
-
         // Mask secret value in output
         core.setSecret(variableName, dynamicSecret);
-
 
         if (exportSecretsToOutputs) {
           core.setOutput(variableName, dynamicSecret);
@@ -47,8 +44,6 @@ function getStaticSecret(api, name, variableName, akeylessToken, exportSecretsTo
         })
       )
       .then(staticSecret => {
-        core.info(`Static secret ${name} was fetched successfully`);
-        
         // Mask secret value in output
         const secretValue = staticSecret[name];
         core.setSecret(secretValue);
