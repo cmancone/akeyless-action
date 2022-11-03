@@ -63,22 +63,30 @@ function getStaticSecret(api, name, variableName, akeylessToken, exportSecretsTo
   });
 }
 
-function exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment) {
+async function exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment) {
   const api = akeylessApi.api(apiUrl);
-  const toAwait = [];
+
   for (const [akeylessPath, variableName] of Object.entries(dynamicSecrets)) {
-    toAwait.push(getDynamicSecret(api, akeylessPath, variableName, akeylessToken, exportSecretsToOutputs, exportSecretsToEnvironment));
+    try {
+      await getDynamicSecret(api, akeylessPath, variableName, akeylessToken, exportSecretsToOutputs, exportSecretsToEnvironment);
+    } catch (error) {
+      core.error(`Failed to export dynamic secrets: ${error}`);
+      core.setFailed(`Failed to export dynamic secrets: ${error}`);
+    }
   }
-  return toAwait;
 }
 
 async function exportStaticSecrets(akeylessToken, staticSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment) {
   const api = akeylessApi.api(apiUrl);
-  const toAwait = [];
+
   for (const [akeylessPath, variableName] of Object.entries(staticSecrets)) {
-    toAwait.push(getStaticSecret(api, akeylessPath, variableName, akeylessToken, exportSecretsToOutputs, exportSecretsToEnvironment));
+    try {
+      await getStaticSecret(api, akeylessPath, variableName, akeylessToken, exportSecretsToOutputs, exportSecretsToEnvironment);
+    } catch (error) {
+      core.error(`Failed to export static secrets: ${error}`);
+      core.setFailed(`Failed to export static secrets: ${error}`);
+    }
   }
-  return toAwait;
 }
 
 exports.exportDynamicSecrets = exportDynamicSecrets;
