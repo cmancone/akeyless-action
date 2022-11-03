@@ -8,6 +8,8 @@ on:
   pull_request:
     branches:    
       - main
+env:
+  AKEYLESS_ACCESS_ID: 'p-fq3qbjjxv839' # you can also use a secret  ${{ secrets.AKEYLESS_ACCESS_ID }}
 
 jobs:
   fetch_static_secrets:
@@ -26,7 +28,7 @@ jobs:
       id: fetch-static-secrets
       uses: ./   # IMPORTANT - in your workflow, this should be 'uses: LanceMcCarthy/akeyless-action@v2'
       with:
-        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        access-id: ${{ env.AKEYLESS_ACCESS_ID }}
         static-secrets: '{"/personal-keys/mccarthy/MyFirstSecret":"my_first_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
@@ -36,17 +38,17 @@ jobs:
         echo "[static] Your output secret is ${{ steps.fetch-static-secrets.outputs.my_first_secret }}"
         echo "[static] Your environment secret is ${{ env.my_first_secret }}"
         
-    - name: Fetch dynamic secrets from AKeyless
-      id: fetch-dynamic-secrets
-      uses: ./
-      with:
-        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
-        dynamic-secrets: '{"/DevTools/dvlup-azure":"my_dynamic_secret"}'
-        export-secrets-to-outputs: true
-        export-secrets-to-environment: true
-        
-    - name: Output your secret (masked in output)
-      run: |
-        echo "[dynamic] Your output secret is ${{ steps.fetch-dynamic-secrets.my_dynamic_secret }}"
-        echo "[dynamic] Your environment secret is ${{ env.my_dynamic_secret }}"
+#    - name: Fetch dynamic secrets from AKeyless
+#     id: fetch-dynamic-secrets
+#      uses: ./
+#      with:
+#        access-id: ${{ env.AKEYLESS_ACCESS_ID }}
+#        dynamic-secrets: '{"/DevTools/dvlup-azure":"my_dynamic_secret"}'
+#        export-secrets-to-outputs: true
+#        export-secrets-to-environment: true
+#        
+#    - name: Output your secret (masked in output)
+#      run: |
+#        echo "[dynamic] Your output secret is ${{ steps.fetch-dynamic-secrets.my_dynamic_secret }}"
+#        echo "[dynamic] Your environment secret is ${{ env.my_dynamic_secret }}"
         
