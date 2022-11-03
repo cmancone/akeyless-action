@@ -68,41 +68,36 @@ async function exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, expor
 
   for (const [akeylessPath, variableName] of Object.entries(dynamicSecrets)) {
     try {
-      //await getDynamicSecret(api, akeylessPath, variableName, akeylessToken, exportSecretsToOutputs, exportSecretsToEnvironment);
-      let secretName = akeylessPath;
+      let param = akeyless.GetDynamicSecretValue.constructFromObject({
+        token: akeylessToken,
+        name: akeylessPath
+      });
 
-      await api
-        .getDynamicSecretValue(
-          akeyless.GetDynamicSecretValue.constructFromObject({
-            token: akeylessToken,
-            name: secretName
-          })
-        )
-        .then(dynamicSecret => {
-          // Mask secret value in output
-          core.setSecret(variableName, dynamicSecret);
-
-          if (exportSecretsToOutputs) {
-            core.setOutput(variableName, dynamicSecret);
-          }
-
-          if (exportSecretsToEnvironment) {
-            try {
-              let toEnvironment = dynamicSecret;
-              if (dynamicSecret.constructor === Array || dynamicSecret.constructor === Object) {
-                toEnvironment = JSON.stringify(dynamicSecret);
-              }
-              core.exportVariable(variableName, toEnvironment);
-              //resolve({variableName: dynamicSecret});
-            } catch (error) {
-              core.error(`exportSecretsToEnvironment Failed: ${error}`);
-            }
-          }
-        })
-        .catch(error => {
-          //core.error(`getDynamicSecretValue Failed: ${error}`);
+      let dynamicSecret = await api.getDynamicSecretValue(param).catch(error => {
+          core.error(`getDynamicSecretValue Failed: ${error}`);
           core.setFailed(`getDynamicSecretValue Failed: ${error}`);
         });
+
+      // Mask secret value in output
+      core.setSecret(variableName, dynamicSecret);
+
+      if (exportSecretsToOutputs) {
+        core.setOutput(variableName, dynamicSecret);
+      }
+
+      if (exportSecretsToEnvironment) {
+        try {
+          let toEnvironment = dynamicSecret;
+          if (dynamicSecret.constructor === Array || dynamicSecret.constructor === Object) {
+            toEnvironment = JSON.stringify(dynamicSecret);
+          }
+          core.exportVariable(variableName, toEnvironment);
+        } catch (error) {
+          core.error(`exportSecretsToEnvironment Failed: ${error}`);
+        }
+
+        //resolve({variableName: dynamicSecret});
+      }
     } catch (error) {
       //core.error(`Failed to export dynamic secrets: ${error}`);
       core.setFailed(`Failed to export dynamic secrets: ${error}`);
