@@ -20,9 +20,9 @@
   },
   "homepage": "https://github.com/LanceMcCarthy/akeyless-action#readme",
   "dependencies": {
-    "@actions/core": "^1.6.0",
-    "@actions/github": "^5.0.0",
-    "akeyless": "^2.15.24",
+    "@actions/core": "^1.9.1",
+    "@actions/github": "^5.1.1",
+    "akeyless": "^2.20.0",
     "akeyless-cloud-id": "^1.0.0"
   },
   "devDependencies": {
