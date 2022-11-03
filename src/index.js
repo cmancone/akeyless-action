@@ -47,7 +47,11 @@ async function run() {
   // dynamic secrets
   if (dynamicSecrets) {
     core.debug(`Dynamic Secrets: Fetching!`);
-    toAwait.push(secrets.exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment));
+
+    secrets.exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment)
+      .forEach(promise => toAwait.push(promise));
+      
+    //toAwait.push();
   } else {
     core.debug(`Dynamic Secrets: Skipping step because no dynamic secrets were specified`);
   }
