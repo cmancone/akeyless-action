@@ -3,7 +3,6 @@ name: 'CI Tests'
 on:
   push:
     branches:
-      - 'issue/*'
       - 'investigation/*'
  
 jobs:
@@ -13,8 +12,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    env:
-      AKEYLESS_ACCESS_ID: 'p-fq3qbjjxv839'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -25,7 +22,7 @@ jobs:
       id: fetch-static-secrets
       uses: ./
       with:
-        access-id: ${{ env.AKEYLESS_ACCESS_ID }}
+        access-id: 'p-fq3qbjjxv839'
         static-secrets: '{"/personal-keys/mccarthy/MyFirstSecret":"my_first_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
@@ -39,7 +36,7 @@ jobs:
      id: fetch-dynamic-secrets
      uses: ./
      with:
-       access-id: ${{ env.AKEYLESS_ACCESS_ID }}
+       access-id: 'p-fq3qbjjxv839'
        dynamic-secrets: '{"/DevTools/dvlup-azure":"my_dynamic_secret"}'
        export-secrets-to-outputs: true
        export-secrets-to-environment: true
