@@ -23,15 +23,16 @@ async function run() {
 
   core.debug(`AKeyless token length: ${akeylessToken.length}`);
 
-  // Logging into AWS and fetching secrets can all run at the same time,
-  // and we don't need to do anything with the response from them.  Therefore, collect
-  // their promises and then just await for all of them.
-  const toAwait = [];
-
   // AWS Access
   if (producerForAwsAccess) {
     core.debug(`AWS Access: Fetching credentials with producer ${producerForAwsAccess}`);
-    toAwait.push(awsAccess.awsLogin(akeylessToken, producerForAwsAccess, apiUrl));
+
+    try {
+      await awsAccess.awsLogin(akeylessToken, producerForAwsAccess, apiUrl);
+    } catch (error) {
+      core.error(`Failed to fetch AWS producer credentials: ${error}`);
+      core.setFailed(`Failed to fetch AWS producer credentials: ${error}`);
+    }
   } else {
     core.debug(`AWS Access: Skipping because no AWS producer is specified`);
   }
@@ -39,7 +40,13 @@ async function run() {
   // static secrets
   if (staticSecrets) {
     core.debug(`Static Secrets: Fetching!`);
-    toAwait.push(secrets.exportStaticSecrets(akeylessToken, staticSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment));
+
+    try {
+      await secrets.exportStaticSecrets(akeylessToken, staticSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment);
+    } catch (error) {
+      core.error(`Failed to fetch static secrets: ${error}`);
+      core.setFailed(`Failed to fetch static secrets: ${error}`);
+    }
   } else {
     core.debug(`Static Secrets: Skpping step because no static secrets were specified`);
   }
@@ -47,7 +54,13 @@ async function run() {
   // dynamic secrets
   if (dynamicSecrets) {
     core.debug(`Dynamic Secrets: Fetching!`);
-    toAwait.push(secrets.exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment));
+
+    try {
+      await secrets.exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, exportSecretsToOutputs, exportSecretsToEnvironment);
+    } catch (error) {
+      core.error(`Failed to fetch dynamic secrets: ${error}`);
+      core.setFailed(`Failed to fetch dynamic secrets: ${error}`);
+    }
   } else {
     core.debug(`Dynamic Secrets: Skipping step because no dynamic secrets were specified`);
   }

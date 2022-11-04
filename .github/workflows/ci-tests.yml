@@ -1,0 +1,58 @@
+name: 'CI Tests'
+
+on:
+  push:
+    branches: [ 'investigation/*' ]
+
+jobs:
+  fetch_static_secrets:
+    runs-on: ubuntu-latest
+    name: Fetch static secrets
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Fetch static secrets from AKeyless
+      id: fetch-static-secrets
+      uses: ./
+      with:
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        static-secrets: '{"/DevTools/my-static-secret":"my_static_secret"}'
+        export-secrets-to-outputs: true
+        export-secrets-to-environment: true
+        
+    - name: Verify static secrets output
+      run: |
+        echo "[static] Your output secret is ${{ steps.fetch-static-secrets.my_static_secret }}"
+        echo "[static] Your environment secret is ${{ env.my_static_secret }}"
+
+  fetch_dynamic_secrets:
+    runs-on: ubuntu-latest
+    name: Fetch SQL Server dynamic secrets
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Fetch dynamic secrets from AKeyless
+      id: fetch-dynamic-secrets
+      uses: ./
+      with:
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        dynamic-secrets: '{"/DevTools/az-sqlsrvsecret":"dynamic_sqlsrv_secret"}'
+        export-secrets-to-outputs: true
+        export-secrets-to-environment: true
+        
+    - name: Verify dynamic secrets output
+      run: |
+        echo "[dynamic] Your output secret is ${{ steps.fetch-dynamic-secrets.dynamic_sqlsrv_secret }}"
+        echo "[dynamic] Your environment secret is ${{ env.dynamic_sqlsrv_secret }}"
