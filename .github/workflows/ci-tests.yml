@@ -4,9 +4,6 @@ on:
   push:
     branches: [ 'investigation/*' ]
 
-env:
-  AKEYLESS_ACCESS_ID: 'p-149l6gayzx05'  #${{ secrets.AKEYLESS_ACCESS_ID }}
-
 jobs:
   fetch_static_secrets:
     runs-on: ubuntu-latest
@@ -24,7 +21,7 @@ jobs:
       id: fetch-static-secrets
       uses: ./
       with:
-        access-id: ${{ env.AKEYLESS_ACCESS_ID }}
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
         static-secrets: '{"/DevTools/my-static-secret":"my_static_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
@@ -34,33 +31,7 @@ jobs:
         echo "[static] Your output secret is ${{ steps.fetch-static-secrets.my_static_secret }}"
         echo "[static] Your environment secret is ${{ env.my_static_secret }}"
 
-  azvault_dynamic_secrets:
-    runs-on: ubuntu-latest
-    name: Fetch Azure KeyVault dynamic secrets
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
-    - name: Fetch dynamic secrets from AKeyless
-      id: fetch-dynamic-secrets
-      uses: ./
-      with:
-        access-id: ${{ env.AKEYLESS_ACCESS_ID }}
-        dynamic-secrets: '{"/DevTools/dvlup-azure":"dynamic_azvault_secret"}'
-        export-secrets-to-outputs: true
-        export-secrets-to-environment: true
-        
-    - name: Verify dynamic secrets output
-      run: |
-        echo "[dynamic] Your output secret is ${{ steps.fetch-dynamic-secrets.dynamic_azvault_secret }}"
-        echo "[dynamic] Your environment secret is ${{ env.dynamic_azvault_secret }}"
-
-  sql_dynamic_secrets:
+  fetch_dynamic_secrets:
     runs-on: ubuntu-latest
     name: Fetch SQL Server dynamic secrets
     permissions:
@@ -76,7 +47,7 @@ jobs:
       id: fetch-dynamic-secrets
       uses: ./
       with:
-        access-id: ${{ env.AKEYLESS_ACCESS_ID }}
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
         dynamic-secrets: '{"/DevTools/az-sqlsrvsecret":"dynamic_sqlsrv_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true

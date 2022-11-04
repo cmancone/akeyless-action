@@ -2,11 +2,7 @@ name: 'CI'
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    branches: [ 'main' ]
 
 jobs:
   fetch_static_secrets:
@@ -23,10 +19,10 @@ jobs:
 
     - name: Fetch static secrets from AKeyless
       id: fetch-static-secrets
-      uses: ./ # IMPORTANT - in your workflow, this should be 'uses: LanceMcCarthy/akeyless-action@v2' (v2 being whatever version you want to use)
+      uses: ./
       with:
-        access-id: 'p-fq3qbjjxv839' # you can also use a secret  ${{ secrets.AKEYLESS_ACCESS_ID }}
-        static-secrets: '{"/personal-keys/mccarthy/MyFirstSecret":"my_first_secret"}'
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }} # Looks like p-fq3afjjxv839
+        static-secrets: '{"/DevTools/my-static-secret":"my_static_secret"}' # confirm correct path AND your JWT token is allowed to use this secret
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
         
@@ -37,7 +33,7 @@ jobs:
 
   fetch_dynamic_secrets:
     runs-on: ubuntu-latest
-    name: Fetch dynamic secrets
+    name: Fetch SQL Server dynamic secrets
     permissions:
       id-token: write
       contents: read
@@ -47,16 +43,16 @@ jobs:
       with:
         fetch-depth: 0
 
-   - name: Fetch dynamic secrets from AKeyless
-    id: fetch-dynamic-secrets
-     uses: ./ # IMPORTANT - in your workflow, this should be 'uses: LanceMcCarthy/akeyless-action@v2' (v2 being whatever version you want to use)
-     with:
-       access-id: 'p-fq3qbjjxv839' # you can also use a secret  ${{ secrets.AKEYLESS_ACCESS_ID }}
-       dynamic-secrets: '{"/DevTools/dvlup-azure":"my_dynamic_secret"}'
-       export-secrets-to-outputs: true
-       export-secrets-to-environment: true
-       
-   - name: Output your secret (masked in output)
-     run: |
-       echo "[dynamic] Your output secret is ${{ steps.fetch-dynamic-secrets.my_dynamic_secret }}"
-       echo "[dynamic] Your environment secret is ${{ env.my_dynamic_secret }}"
+    - name: Fetch dynamic secrets from AKeyless
+      id: fetch-dynamic-secrets
+      uses: ./
+      with:
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }} # Looks like p-fq3afjjxv839
+        dynamic-secrets: '{"/DevTools/az-sqlsrvsecret":"dynamic_sqlsrv_secret"}' # confirm correct path AND your JWT token is allowed to use this secret
+        export-secrets-to-outputs: true
+        export-secrets-to-environment: true
+        
+    - name: Verify dynamic secrets output
+      run: |
+        echo "[dynamic] Your output secret is ${{ steps.fetch-dynamic-secrets.dynamic_sqlsrv_secret }}"
+        echo "[dynamic] Your environment secret is ${{ env.dynamic_sqlsrv_secret }}"
