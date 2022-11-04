@@ -28,7 +28,7 @@ jobs:
         
   azvault_dynamic_secrets:
     runs-on: ubuntu-latest
-    name: Fetch dynamic secrets
+    name: Fetch Azure KeyVault dynamic secrets
     permissions:
       id-token: write
       contents: read
@@ -54,7 +54,7 @@ jobs:
 
   sql_dynamic_secrets:
     runs-on: ubuntu-latest
-    name: Fetch dynamic secrets
+    name: Fetch SQL Server dynamic secrets
     permissions:
       id-token: write
       contents: read
