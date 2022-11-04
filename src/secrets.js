@@ -39,7 +39,7 @@ async function exportDynamicSecrets(akeylessToken, dynamicSecrets, apiUrl, expor
       }
 
     } catch (error) {
-      //core.error(`Failed to export dynamic secrets: ${error}`);
+      core.error(`Failed to export dynamic secrets: ${error}`);
       core.setFailed(`Failed to export dynamic secrets: ${error}`);
     }
   }
