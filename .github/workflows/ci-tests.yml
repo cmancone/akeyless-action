@@ -22,10 +22,15 @@ jobs:
       uses: ./
       with:
         access-id: 'p-fq3qbjjxv839'
-        static-secrets: '{"/personal-keys/mccarthy/MyFirstSecret":"my_first_secret"}'
+        static-secrets: '{"/DevTools/my-static-secret":"my_static_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
         
+    - name: Verify static secrets output
+      run: |
+        echo "[static] Your output secret is ${{ steps.fetch-static-secrets.my_static_secret }}"
+        echo "[static] Your environment secret is ${{ env.my_static_secret }}"
+
   azvault_dynamic_secrets:
     runs-on: ubuntu-latest
     name: Fetch Azure KeyVault dynamic secrets
