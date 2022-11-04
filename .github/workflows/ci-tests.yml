@@ -21,7 +21,7 @@ jobs:
       id: fetch-static-secrets
       uses: ./
       with:
-        access-id: 'p-fq3qbjjxv839'
+        access-id: 'p-149l6gayzx05'
         static-secrets: '{"/DevTools/my-static-secret":"my_static_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
@@ -47,7 +47,7 @@ jobs:
       id: fetch-dynamic-secrets
       uses: ./
       with:
-        access-id: 'p-fq3qbjjxv839'
+        access-id: 'p-149l6gayzx05'
         dynamic-secrets: '{"/DevTools/dvlup-azure":"dynamic_azvault_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
@@ -73,7 +73,7 @@ jobs:
       id: fetch-dynamic-secrets
       uses: ./
       with:
-        access-id: 'p-fq3qbjjxv839'
+        access-id: 'p-149l6gayzx05'
         dynamic-secrets: '{"/DevTools/az-sqlsrvsecret":"dynamic_sqlsrv_secret"}'
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
