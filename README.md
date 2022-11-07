@@ -152,17 +152,17 @@ The key difference with dynamic secrets is the output value is typcially a json 
 
     - name: Fetch dynamic secrets from AKeyless
       id: fetch-dynamic-secrets
-      uses: ./
+      uses: LanceMcCarthy/akeyless-action@v2
       with:
         access-id: ${{ secrets.AKEYLESS_ACCESS_ID }} # Looks like p-fq3afjjxv839
-        dynamic-secrets: '{"/DevTools/test-grib":"aws_dynamic_secrets"}'
+        dynamic-secrets: '{"/path/to/dynamic/aws/secret":"aws_dynamic_secrets"}'
         
-    # **** KEY TAKEAWAY - EXPORT EVERY DYNAMIC SECRET VALUE AS ENV VARS *****
+# **** KEY TAKEAWAY - EXPORT EVERY DYNAMIC SECRET VALUE AS ENV VARS *****
     - name: Export Secrets to Environment
       run: |
         echo '${{ steps.fetch-dynamic-secrets.outputs.aws_dynamic_secrets }}' | jq -r 'to_entries|map("AWS_\(.key)=\(.value|tostring)")|.[]' >> $GITHUB_ENV
 
-    # You can now access each secret separately as environment variables
+# You can now access each secret separately as environment variables
     - name: Verify Vars
       run: |
         echo "access_key_id: ${{ env.AWS_access_key_id }}"
