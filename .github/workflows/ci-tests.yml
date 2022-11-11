@@ -24,9 +24,7 @@ jobs:
       with:
         access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
         static-secrets: '{"/DevTools/my-static-secret":"my_static_secret"}'
-        export-secrets-to-outputs: true
-        export-secrets-to-environment: true
-        
+
     - name: Verify static secrets output
       run: |
         echo "[static] Your output secret is ${{ steps.fetch-static-secrets.my_static_secret }}"
@@ -34,7 +32,7 @@ jobs:
 
   fetch_aws_dynamic_secrets:
     runs-on: ubuntu-latest
-    name: Fetch AWS dynamic secrets
+    name: Fetch AWS dynamic secrets (default)
     permissions:
       id-token: write
       contents: read
@@ -45,17 +43,73 @@ jobs:
         fetch-depth: 0
 
     - name: Fetch dynamic secrets from AKeyless
-      id: fetch-dynamic-secrets
-      uses: ./
+      id: fetch-aws-secrets
+      uses: LanceMcCarthy/akeyless-action@v3.0.0
       with:
         access-id: ${{ secrets.AKEYLESS_ACCESS_ID }} # Looks like p-fq3afjjxv839
         dynamic-secrets: '{"/DevTools/test-grib":"aws_dynamic_secrets"}'
         
-    - name: Export Secrets to Environment
+    - name: EXTRA 1 - Export Secrets to Environment using jq
       run: |
-        echo '${{ steps.fetch-dynamic-secrets.outputs.aws_dynamic_secrets }}' | jq -r 'to_entries|map("AWS_\(.key)=\(.value|tostring)")|.[]' >> $GITHUB_ENV
+        echo '${{ steps.fetch-aws-secrets.outputs.aws_dynamic_secrets }}' | jq -r 'to_entries|map("AKEYLESS_\(.key)=\(.value|tostring)")|.[]' >> $GITHUB_ENV
 
-    - name: Verify Vars
+    - name: EXTRA 2 - Verify Exports
+      run: |
+        echo "access_key_id: ${{ env.AKEYLESS_access_key_id }}"
+        echo "id: ${{ env.AKEYLESS_id }}"
+        echo "secret_access_key: ${{ env.AKEYLESS_secret_access_key }}"
+        echo "security_token: ${{ env.AKEYLESS_security_token }}"
+        echo "ttl_in_minutes: ${{ env.AKEYLESS_ttl_in_minutes }}"
+        echo "type: ${{ env.AKEYLESS_type }}"
+        echo "user: ${{ env.AKEYLESS_user }}"
+
+    - name: Fetch AWS dynamic secrets (parsed)
+      id: aws-secrets-parsed
+      uses: LanceMcCarthy/akeyless-action@v3.0.0
+      with:
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        dynamic-secrets: '{"/DevTools/test-grib":""}'
+        parse-dynamic-secrets: true
+
+    - name: Verify Parsed Outputs
+      run: |
+        echo "access_key_id: ${{ steps.aws-secrets-parsed.outputs.access_key_id }}"
+        echo "id: ${{ steps.aws-secrets-parsed.outputs.id }}"
+        echo "secret_access_key: ${{ steps.aws-secrets-parsed.outputs.secret_access_key }}"
+        echo "security_token: ${{ steps.aws-secrets-parsed.outputs.security_token }}"
+        echo "ttl_in_minutes: ${{ steps.aws-secrets-parsed.outputs.ttl_in_minutes }}"
+        echo "type: ${{ steps.aws-secrets-parsed.outputs.type }}"
+        echo "user: ${{ steps.aws-secrets-parsed.outputs.user }}"
+
+    - name: Verify Parsed Vars
+      run: |
+        echo "access_key_id: ${{ env.access_key_id }}"
+        echo "id: ${{ env.id }}"
+        echo "secret_access_key: ${{ env.secret_access_key }}"
+        echo "security_token: ${{ env.security_token }}"
+        echo "ttl_in_minutes: ${{ env.ttl_in_minutes }}"
+        echo "type: ${{ env.type }}"
+        echo "user: ${{ env.user }}"
+
+    - name: Fetch AWS dynamic secrets (prefixed)
+      id: aws-secrets-prefixed
+      uses: LanceMcCarthy/akeyless-action@v3.0.0
+      with:
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        dynamic-secrets: '{"/DevTools/test-grib":"AWS"}'
+        parse-dynamic-secrets: true
+
+    - name: Verify Job Outputs
+      run: |
+        echo "access_key_id: ${{ steps.aws-secrets-prefixed.outputs.AWS_access_key_id }}"
+        echo "id: ${{ steps.aws-secrets-prefixed.outputs-prefixed.AWS_id }}"
+        echo "secret_access_key: ${{ steps.aws-secrets-prefixed.outputs.AWS_secret_access_key }}"
+        echo "security_token: ${{ steps.aws-secrets-prefixed.outputs.AWS_security_token }}"
+        echo "ttl_in_minutes: ${{ steps.aws-secrets-prefixed.outputs.AWS_ttl_in_minutes }}"
+        echo "type: ${{ steps.aws-secrets-prefixed.outputs.AWS_type }}"
+        echo "user: ${{ steps.aws-secrets-prefixed.outputs.AWS_user }}"
+
+    - name: Verify Environment Variables
       run: |
         echo "access_key_id: ${{ env.AWS_access_key_id }}"
         echo "id: ${{ env.AWS_id }}"
@@ -77,15 +131,13 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Fetch dynamic secrets from AKeyless
+    - name: Fetch SQL dynamic secrets (default)
       id: fetch-dynamic-secrets
-      uses: ./
+      uses: LanceMcCarthy/akeyless-action@v3.0.0
       with:
         access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
         dynamic-secrets: '{"/DevTools/az-sqlsrvsecret":"my_dynamic_secret"}'
-        export-secrets-to-outputs: true
-        export-secrets-to-environment: true
-        
+
     - name: Verify Fetch Job Environment Variables
       run: |
         # echo "[Env Var] Your environment secret is ${{ env.my_dynamic_secret }}"
@@ -110,12 +162,63 @@ jobs:
         echo "PASSWORD:"
         echo '${{ steps.fetch-dynamic-secrets.outputs.my_dynamic_secret }}' | jq '.password'
 
-    - name: EXTRA A - Export Job Outputs to Separate GitHub Runner Env Vars
-      run: echo '${{ steps.fetch-dynamic-secrets.outputs.my_dynamic_secret }}' | jq -r 'to_entries|map("AKEYLESS_\(.key)=\(.value|tostring)")|.[]' >> $GITHUB_ENV
+    - name: EXTRA 1 - Export Secrets to Environment using jq
+      run: |
+        echo '${{ steps.fetch-dynamic-secrets.outputs.my_dynamic_secret }}' | jq -r 'to_entries|map("AKEYLESS_\(.key)=\(.value|tostring)")|.[]' >> $GITHUB_ENV
     
-    - name: EXTRA B - Confirm GitHub Runner Env Vars
+    - name: EXTRA 2 - Verify Export Variables
       run: |
         echo "AKEYLESS_id = ${{ env.AKEYLESS_id }}"
         echo "AKEYLESS_user = ${{ env.AKEYLESS_user }}"
         echo "AKEYLESS_password = ${{ env.AKEYLESS_password }}"
         echo "AKEYLESS_ttl_in_minutes = ${{ env.AKEYLESS_ttl_in_minutes }}"
+
+    - name: Fetch SQL dynamic secrets (parsed)
+      id: sql-secrets-parsed
+      uses: LanceMcCarthy/akeyless-action@v3.0.0
+      with:
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        dynamic-secrets: '{"/DevTools/test-grib":""}'
+        parse-dynamic-secrets: true
+
+    - name: Verify Parsed Outputs
+      run: |
+        echo "access_key_id: ${{ steps.sql-secrets-parsed.outputs.access_key_id }}"
+        echo "id: ${{ steps.sql-secrets-parsed.outputs.id }}"
+        echo "secret_access_key: ${{ steps.sql-secrets-parsed.outputs.secret_access_key }}"
+        echo "security_token: ${{ steps.sql-secrets-parsed.outputs.security_token }}"
+        echo "ttl_in_minutes: ${{ steps.sql-secrets-parsed.outputs.ttl_in_minutes }}"
+        echo "type: ${{ steps.sql-secrets-parsed.outputs.type }}"
+        echo "user: ${{ steps.sql-secrets-parsed.outputs.user }}"
+
+    - name: Verify Parsed Vars
+      run: |
+        echo "access_key_id: ${{ env.access_key_id }}"
+        echo "id: ${{ env.id }}"
+        echo "secret_access_key: ${{ env.secret_access_key }}"
+        echo "security_token: ${{ env.security_token }}"
+        echo "ttl_in_minutes: ${{ env.ttl_in_minutes }}"
+        echo "type: ${{ env.type }}"
+        echo "user: ${{ env.user }}"
+
+    - name: Fetch SQL dynamic secrets (prefixed)
+      id: sql-secrets-prefix
+      uses: LanceMcCarthy/akeyless-action@v3.0.0
+      with:
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        dynamic-secrets: '{"/DevTools/az-sqlsrvsecret":"SQL"}'
+        parse-dynamic-secrets: true
+
+    - name: Verify Outputs
+      run: |
+        echo "ID: ${{ steps.sql-secrets-prefix.outputs.SQL_id }}" 
+        echo "USER: ${{ steps.sql-secrets-prefix.outputs.SQL_user }}" 
+        echo "TTL_IN_MINUTES: ${{ steps.sql-secrets-prefix.outputs.SQL_ttl_in_minutes }}" 
+        echo "PASSWORD: ${{ steps.sql-secrets-prefix.outputs.SQL_password }}"
+
+    - name: Verify Vars
+      run: |
+        echo "ID: ${{ env.SQL_id }}"
+        echo "USER: ${{ env.SQL_user }}"
+        echo "TTL_IN_MINUTES: ${{ env.SQL_ttl_in_minutes }}"
+        echo "PASSWORD: ${{ env.SQL_password }}"
