@@ -34,6 +34,10 @@ inputs:
     description: 'Whether or not to export the extracted secrets to the environment.'
     required: false
     default: true
+  separate-dynamic-secrets:
+    description: 'Dynamic secrets get exported as a single JSON object. This switch will let you get separate output/env variables for each key.'
+    required: false
+    default: false
 runs:
   using: 'node16'
   main: 'src/index.js'

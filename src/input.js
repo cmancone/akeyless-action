@@ -10,7 +10,8 @@ const stringInputs = {
 
 const boolInputs = {
   exportSecretsToOutputs: 'export-secrets-to-outputs',
-  exportSecretsToEnvironment: 'export-secrets-to-environment'
+  exportSecretsToEnvironment: 'export-secrets-to-environment',
+  parseDynamicSecrets: 'parse-dynamic-secrets'
 };
 
 const dictInputs = {
@@ -27,7 +28,8 @@ const fetchAndValidateInput = () => {
     staticSecrets: core.getInput('static-secrets'),
     dynamicSecrets: core.getInput('dynamic-secrets'),
     exportSecretsToOutputs: core.getBooleanInput('export-secrets-to-outputs'),
-    exportSecretsToEnvironment: core.getBooleanInput('export-secrets-to-environment')
+    exportSecretsToEnvironment: core.getBooleanInput('export-secrets-to-environment'),
+    parseDynamicSecrets: core.getBooleanInput('parse-dynamic-secrets')
   };
   // our only required parameter
   if (!params['accessId']) {
@@ -70,7 +72,7 @@ const fetchAndValidateInput = () => {
   }
   // check access types
   if (!auth.allowedAccessTypes.includes(params['accessType'].toLowerCase())) {
-    throw new Error("access-type must be one of: ['" + auth.allowedAccessTypes.join("', '") + "']");
+    throw new Error(`access-type must be one of: ['${auth.allowedAccessTypes.join("', '")}']`);
   }
   params['accessType'] = params['accessType'].toLowerCase();
 

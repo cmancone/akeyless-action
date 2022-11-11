@@ -1,0 +1,81 @@
+name: 'Feature Dev Tests'
+
+on:
+  push:
+    branches:
+    - 'feature/*'
+
+jobs:
+  fetch_aws_dynamic_secrets:
+    runs-on: ubuntu-latest
+    name: Fetch AWS dynamic secrets (pre-parsed)
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Fetch dynamic secrets from AKeyless (NO PREFIX)
+      id: aws-secrets
+      uses: ./
+      with:
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        dynamic-secrets: '{"/DevTools/test-grib":""}'
+        parse-dynamic-secrets: true
+        
+    - name: Verify Outputs
+      run: |
+        echo "access_key_id: ${{ steps.aws-secrets.outputs.access_key_id }}"
+        echo "id: ${{ steps.aws-secrets.outputs.id }}"
+        echo "secret_access_key: ${{ steps.aws-secrets.outputs.secret_access_key }}"
+        echo "security_token: ${{ steps.aws-secrets.outputs.security_token }}"
+        echo "ttl_in_minutes: ${{ steps.aws-secrets.outputs.ttl_in_minutes }}"
+        echo "type: ${{ steps.aws-secrets.outputs.type }}"
+        echo "user: ${{ steps.aws-secrets.outputs.user }}"
+
+    - name: Verify Vars
+      run: |
+        echo "access_key_id: ${{ env.access_key_id }}"
+        echo "id: ${{ env.id }}"
+        echo "secret_access_key: ${{ env.secret_access_key }}"
+        echo "security_token: ${{ env.security_token }}"
+        echo "ttl_in_minutes: ${{ env.ttl_in_minutes }}"
+        echo "type: ${{ env.type }}"
+        echo "user: ${{ env.user }}"
+
+  fetch_sql_dynamic_secrets:
+    runs-on: ubuntu-latest
+    name: Fetch SQL dynamic secrets (pre-parsed)
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Fetch dynamic secrets from AKeyless ('SQL' PREFIX)
+      id: sql-secrets
+      uses: ./
+      with:
+        access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+        dynamic-secrets: '{"/DevTools/az-sqlsrvsecret":"SQL"}'
+        parse-dynamic-secrets: true
+        
+    - name: Verify Vars
+      run: |
+        echo "ID: ${{ env.SQL_id }}"
+        echo "USER: ${{ env.SQL_user }}"
+        echo "TTL_IN_MINUTES: ${{ env.SQL_ttl_in_minutes }}"
+        echo "PASSWORD: ${{ env.SQL_password }}"
+
+    - name: Verify Outputs
+      run: |
+        echo "ID: ${{ steps.sql-secrets.outputs.SQL_id }}" 
+        echo "USER: ${{ steps.sql-secrets.outputs.SQL_user }}" 
+        echo "TTL_IN_MINUTES: ${{ steps.sql-secrets.outputs.SQL_ttl_in_minutes }}" 
+        echo "PASSWORD: ${{ steps.sql-secrets.outputs.SQL_password }}"
