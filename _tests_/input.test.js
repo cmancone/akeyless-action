@@ -30,7 +30,7 @@ test('Input is all good', () => {
   });
   expect(core.getInput.mock.calls).toEqual([['access-id', {required: true}], ['access-type'], ['api-url'], ['producer-for-aws-access'], ['static-secrets'], ['dynamic-secrets']]);
 
-  expect(core.getBooleanInput.mock.calls).toEqual([['export-secrets-to-outputs'], ['export-secrets-to-environment'], ['parse-dynamic-secrets']]);
+  expect(core.getBooleanInput.mock.calls).toEqual([['export-secrets-to-outputs', {default: true}], ['export-secrets-to-environment', {default: true}], ['parse-dynamic-secrets', {default: false}]]);
 });
 
 test('check string', () => {

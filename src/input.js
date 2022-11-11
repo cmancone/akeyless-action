@@ -27,9 +27,9 @@ const fetchAndValidateInput = () => {
     producerForAwsAccess: core.getInput('producer-for-aws-access'),
     staticSecrets: core.getInput('static-secrets'),
     dynamicSecrets: core.getInput('dynamic-secrets'),
-    exportSecretsToOutputs: core.getBooleanInput('export-secrets-to-outputs'),
-    exportSecretsToEnvironment: core.getBooleanInput('export-secrets-to-environment'),
-    parseDynamicSecrets: core.getBooleanInput('parse-dynamic-secrets')
+    exportSecretsToOutputs: core.getBooleanInput('export-secrets-to-outputs', {default: true}),
+    exportSecretsToEnvironment: core.getBooleanInput('export-secrets-to-environment', {default: true}),
+    parseDynamicSecrets: core.getBooleanInput('parse-dynamic-secrets', {default: false})
   };
   // our only required parameter
   if (!params['accessId']) {
