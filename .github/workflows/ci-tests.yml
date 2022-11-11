@@ -48,35 +48,35 @@ jobs:
       uses: ./
       with:
         access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
-        dynamic-secrets: '{"/DevTools/test-grib":"aws_dynamic_secrets"}'
+        dynamic-secrets: '{"/DevTools/test-grib":"my_dynamic_secret"}'
 
     - name: Verify Job Outputs using jq
       run: |
-        echo "[Job Output] Your output secret is ${{ steps.fetch-secrets.outputs.aws_dynamic_secrets }}"
+        echo "Your job output secret is ${{ steps.fetch-secrets.outputs.my_dynamic_secret }}"
         echo "Manually parsed ID:" 
-        echo '${{ steps.fetch-secrets.outputs.aws_dynamic_secrets }}' | jq '.id'
+        echo '${{ steps.fetch-secrets.outputs.my_dynamic_secret }}' | jq '.id'
         echo "Manually parsed USER:" 
-        echo '${{ steps.fetch-secrets.outputs.aws_dynamic_secrets }}' | jq '.user'
+        echo '${{ steps.fetch-secrets.outputs.my_dynamic_secret }}' | jq '.user'
         echo "Manually parsed TTL_IN_MINUTES:" 
-        echo '${{ steps.fetch-secrets.outputs.aws_dynamic_secrets }}' | jq '.ttl_in_minutes'
+        echo '${{ steps.fetch-secrets.outputs.my_dynamic_secret }}' | jq '.ttl_in_minutes'
         echo "Manually parsed PASSWORD:"
-        echo '${{ steps.fetch-secrets.outputs.aws_dynamic_secrets }}' | jq '.password'
+        echo '${{ steps.fetch-secrets.outputs.my_dynamic_secret }}' | jq '.password'
 
     - name: Verify Environment Variables using jq
       run: |
-        echo "[Env Var] Your environment secret is ${{ env.aws_dynamic_secrets }}"
+        echo "Your environment secret is ${{ env.my_dynamic_secret }}"
         echo "Manually parsed ID:"
-        echo '${{ env.aws_dynamic_secrets }}' | jq '.id'
+        echo '${{ env.my_dynamic_secret }}' | jq '.id'
         echo "Manually parsed USER:"
-        echo '${{ env.aws_dynamic_secrets }}' | jq '.user'
+        echo '${{ env.my_dynamic_secret }}' | jq '.user'
         echo "Manually parsed TTL_IN_MINUTES:"
-        echo '${{ env.aws_dynamic_secrets }}' | jq '.ttl_in_minutes'
+        echo '${{ env.my_dynamic_secret }}' | jq '.ttl_in_minutes'
         echo "Manually parsed PASSWORD:"
-        echo '${{ env.aws_dynamic_secrets }}' | jq '.password'
+        echo '${{ env.my_dynamic_secret }}' | jq '.password'
         
     - name: EXTRA 1 - Manually Export Secrets Using jq
       run: |
-        echo '${{ steps.fetch-secrets.outputs.aws_dynamic_secrets }}' | jq -r 'to_entries|map("AKEYLESS_\(.key)=\(.value|tostring)")|.[]' >> $GITHUB_ENV
+        echo '${{ steps.fetch-secrets.outputs.my_dynamic_secret }}' | jq -r 'to_entries|map("AKEYLESS_\(.key)=\(.value|tostring)")|.[]' >> $GITHUB_ENV
 
     - name: EXTRA 2 - Verify Exported Variables
       run: |
@@ -189,7 +189,7 @@ jobs:
 
     - name: Verify Job Outputs using jq
       run: |
-        echo "[Job Output] Your output secret is ${{ steps.fetch-secrets.outputs.my_dynamic_secret }}"
+        echo "Your job output secret is ${{ steps.fetch-secrets.outputs.my_dynamic_secret }}"
         echo "Manually parsed ID:" 
         echo '${{ steps.fetch-secrets.outputs.my_dynamic_secret }}' | jq '.id'
         echo "Manually parsed USER:" 
@@ -201,13 +201,13 @@ jobs:
 
     - name: Verify Environment Variables using jq
       run: |
-        echo "[Env Var] Your environment secret is ${{ env.my_dynamic_secret }}"
+        echo "Your environment secret is ${{ env.my_dynamic_secret }}"
         echo "Manually parsed ID:"
         echo '${{ env.my_dynamic_secret }}' | jq '.id'
         echo "Manually parsed USER:"
         echo '${{ env.my_dynamic_secret }}' | jq '.user'
         echo "Manually parsed TTL_IN_MINUTES:"
-        echo 'Manually parsed ${{ env.my_dynamic_secret }}' | jq '.ttl_in_minutes'
+        echo '${{ env.my_dynamic_secret }}' | jq '.ttl_in_minutes'
         echo "Manually parsed PASSWORD:"
         echo '${{ env.my_dynamic_secret }}' | jq '.password'
 
