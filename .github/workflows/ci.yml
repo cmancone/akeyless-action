@@ -84,7 +84,7 @@ jobs:
         dynamic-secrets: '{"/DevTools/az-sqlsrvsecret":""}' # empty output variable name for no-prefix
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
-        separate-dynamic-secrets: true # to separate the secrets
+        parse-dynamic-secrets: true # to separate the secrets
         
     - name: Verify Separate Environment Varables
       run: |
@@ -120,7 +120,7 @@ jobs:
         dynamic-secrets: '{"/DevTools/az-sqlsrvsecret":"SQL"}' # out variable name becomes a prefix
         export-secrets-to-outputs: true
         export-secrets-to-environment: true
-        separate-dynamic-secrets: true # to separate the secrets
+        parse-dynamic-secrets: true # to separate the secrets
         
     - name: Verify Separated Environment Varables
       run: |
